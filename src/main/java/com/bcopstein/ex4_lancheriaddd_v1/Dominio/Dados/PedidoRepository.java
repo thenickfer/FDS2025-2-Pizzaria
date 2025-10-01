@@ -1,0 +1,11 @@
+package com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados;
+
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
+
+public interface PedidoRepository {
+    Pedido submetePedido(Pedido ped);
+
+    Pedido.Status getStatus(long id);
+
+    Boolean cancelarPedido(long id);
+}
