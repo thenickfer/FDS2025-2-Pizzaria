@@ -17,13 +17,13 @@ public class PedidoService {
 
     public Pedido submetePedido(Pedido ped) {
         ped = pedidoRepository.submetePedido(ped);
-        if(ped.getStatus() == Pedido.Status.APROVADO){
+        if (ped.getStatus() == Pedido.Status.APROVADO) {
             cozinhaService.chegadaDePedido(ped);
         }
         return ped;
     }
 
-    public Pedido.Status geStatus(long id) {
+    public Pedido.Status getStatus(long id) {
         return pedidoRepository.getStatus(id);
     }
 
