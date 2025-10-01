@@ -12,6 +12,8 @@ import com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao.Presenters.Ped
 import com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao.Presenters.PedidoRequest;
 import com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao.Presenters.StatusPresenter;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.SubmetePedidoUC;
+import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.StatusPedidoResponse;
+import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.RecuperaStatusPedidoUC;
 
 @RestController
 @RequestMapping("/pedido")
