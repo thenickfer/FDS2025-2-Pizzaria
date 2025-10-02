@@ -13,6 +13,8 @@ import com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao.Presenters.Ped
 import com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao.Presenters.StatusPresenter;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.SubmetePedidoUC;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.StatusPedidoResponse;
+import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.SubmetePedidoResponse;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.RecuperaStatusPedidoUC;
 
 @RestController
@@ -33,15 +35,24 @@ public class PedidoController {
         return new StatusPresenter(statusResponse.status());
     }
 
-    /*
-     * @PostMapping("/submit")
-     * 
-     * @CrossOrigin("*")
-     * public PedidoPresenter submetePedido(@RequestBody PedidoRequest pedido) {
-     * PedidoResponse pedidoResponse = submetePedidoUC.run(pedido);
-     * PedidoPresenter pedidoPresenter = new
-     * PedidoPresenter(pedidoResponse.get)//esperar pedidoResponse
-     * }
-     */
+    @PostMapping("/submit")
+    @CrossOrigin("*")
+    public PedidoPresenter submetePedido(@RequestBody PedidoRequest pedido) {
+        SubmetePedidoResponse pedidoResponse = submetePedidoUC.run(
+                new Pedido(0, pedido.getCliente(), pedido.getDataHoraPagamento(), pedido.getItens(), pedido.getStatus(),
+                        pedido.getValor(), pedido.getImpostos(), pedido.getDesconto(), pedido.getValorCobrado()));
+        PedidoPresenter pedidoPresenter = new PedidoPresenter(
+            pedidoResponse.getId(),
+            pedidoResponse.getCliente(),
+            pedidoResponse.getDataHoraPagamento(),
+            pedidoResponse.getItens(),
+            pedidoResponse.getStatus(),
+            pedidoResponse.getValor(),
+            pedidoResponse.getImpostos(),
+            pedidoResponse.getDesconto(),
+            pedidoResponse.getValorCobrado()
+        );
+        return pedidoPresenter;
+    }
 
 }
