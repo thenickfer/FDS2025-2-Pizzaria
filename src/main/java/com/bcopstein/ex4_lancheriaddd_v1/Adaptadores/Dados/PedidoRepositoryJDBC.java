@@ -15,20 +15,23 @@ import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Receita;
 @Component
 public class PedidoRepositoryJDBC implements PedidoRepository{
     private JdbcTemplate jdbcTemplate;
-    private PedidoRepository pedidoRepository;
 
     @Autowired
-    public PedidoRepositoryJDBC (JdbcTemplate jdbcTemplate, PedidoRepository pedidoRepository){
+    public PedidoRepositoryJDBC (JdbcTemplate jdbcTemplate){
         this.jdbcTemplate = jdbcTemplate;
-        this.pedidoRepository = pedidoRepository;
 
     }
 
 
     @Override
     public Pedido submetePedido(Pedido ped) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'submetePedido'");
+        this.jdbcTemplate.update(
+            "INSERT INTO pedidos (id, estado, data_hora_pagamento, valor, imposto, desconto, valor_cobrado) " + 
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            ped.getId(), ped.getStatus(), ped.getDataHoraPagamento(), ped.getValor(), 
+            ped.getImpostos(), ped.getDesconto(), ped.getValorCobrado()
+        );
+        return ped;
     }
 
     @Override
