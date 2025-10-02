@@ -1,31 +1,25 @@
-package com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades;
+package com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Pedido {
-    public enum Status {
-        NOVO,
-        APROVADO,
-        PAGO,
-        AGUARDANDO,
-        PREPARACAO,
-        PRONTO,
-        TRANSPORTE,
-        ENTREGUE
-    }
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Cliente;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.ItemPedido;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
+
+public class SubmetePedidoResponse {
 
     private long id;
     private Cliente cliente;
     private LocalDateTime dataHoraPagamento;
     private List<ItemPedido> itens;
-    private Status status;
+    private Pedido.Status status;
     private double valor;
     private double impostos;
     private double desconto;
     private double valorCobrado;
 
-    public Pedido(long id, Cliente cliente, LocalDateTime dataHoraPagamento, List<ItemPedido> itens,
+    public SubmetePedidoResponse(long id, Cliente cliente, LocalDateTime dataHoraPagamento, List<ItemPedido> itens,
             Pedido.Status status, double valor, double impostos, double desconto, double valorCobrado) {
         this.id = id;
         this.cliente = cliente;
@@ -54,11 +48,11 @@ public class Pedido {
         return itens;
     }
 
-    public Status getStatus() {
+    public Pedido.Status getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(Pedido.Status status) {
         this.status = status;
     }
 
@@ -76,9 +70,5 @@ public class Pedido {
 
     public double getValorCobrado() {
         return valorCobrado;
-    }
-
-    public void setValorCobrado(double valorCobrado) {
-        this.valorCobrado = valorCobrado;
     }
 }

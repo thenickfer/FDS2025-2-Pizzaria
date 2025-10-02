@@ -13,12 +13,12 @@ import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Produto;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Receita;
 
 @Component
-public class PedidoRepostioryJDBC implements PedidoRepository{
+public class PedidoRepositoryJDBC implements PedidoRepository{
     private JdbcTemplate jdbcTemplate;
     private PedidoRepository pedidoRepository;
 
     @Autowired
-    public PedidoRepostioryJDBC (JdbcTemplate jdbcTemplate, PedidoRepository pedidoRepository){
+    public PedidoRepositoryJDBC (JdbcTemplate jdbcTemplate, PedidoRepository pedidoRepository){
         this.jdbcTemplate = jdbcTemplate;
         this.pedidoRepository = pedidoRepository;
 
