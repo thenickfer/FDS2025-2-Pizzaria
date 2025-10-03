@@ -78,10 +78,10 @@ create table if not exists pedidos (
 --Tabela de relacionamento entre Pedido e Cliente
 create table if not exists pedido_cliente(
   pedido_id bigint not null,
-  cliente_id bigint not null,
-  primary key(pedido_id, cliente_id)
+  cliente_cpf varchar(15) not null,
+  primary key(pedido_id, cliente_cpf),
   foreign key (pedido_id) references pedidos(id),
-  foreign key (cliente_id) references clientes(id)
+  foreign key (cliente_cpf) references clientes(cpf)
 );
 
 --Tabela de itemPedido

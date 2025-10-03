@@ -16,19 +16,19 @@ public class CardapioService {
     private CardapioRepository cardapioRepository;
 
     @Autowired
-    public CardapioService(CardapioRepository cardapioRepository){
+    public CardapioService(CardapioRepository cardapioRepository) {
         this.cardapioRepository = cardapioRepository;
     }
 
-    public Cardapio recuperaCardapio(long Id){
+    public Cardapio recuperaCardapio(long Id) {
         return cardapioRepository.recuperaPorId(Id);
     }
 
-    public List<CabecalhoCardapio> recuperaListaDeCardapios(){
+    public List<CabecalhoCardapio> recuperaListaDeCardapios() {
         return cardapioRepository.cardapiosDisponiveis();
     }
 
-    public List<Produto> recuperaSugestoesDoChef(){
+    public List<Produto> recuperaSugestoesDoChef() {
         return cardapioRepository.indicacoesDoChef();
     }
 }

@@ -1,15 +1,23 @@
-package com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao.Presenters;
+package com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Requests;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Cliente;
 
-public class PedidoRequest {
+public class SubmetePedidoRequest {
 
     public static class ItemRequest {
         private long produtoId;
         private int quantidade;
+
+        public ItemRequest() {
+        }
+
+        public ItemRequest(long produtoId, int quantidade) {
+            this.produtoId = produtoId;
+            this.quantidade = quantidade;
+        }
 
         public long getProdutoId() {
             return produtoId;
@@ -35,7 +43,16 @@ public class PedidoRequest {
     private double impostos;
     private double desconto;
 
-    // Getters and Setters
+    public SubmetePedidoRequest(Cliente cliente, LocalDateTime dataHoraPagamento,
+            List<ItemRequest> itens, double valor, double impostos, double desconto) {
+        this.cliente = cliente;
+        this.dataHoraPagamento = dataHoraPagamento;
+        this.itens = itens;
+        this.valor = valor;
+        this.impostos = impostos;
+        this.desconto = desconto;
+    }
+
     public Cliente getCliente() {
         return cliente;
     }

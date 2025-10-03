@@ -4,7 +4,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.PedidoRepository;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
@@ -13,39 +18,48 @@ import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Produto;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Receita;
 
 @Component
-public class PedidoRepositoryJDBC implements PedidoRepository{
+public class PedidoRepositoryJDBC implements PedidoRepository {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public PedidoRepositoryJDBC (JdbcTemplate jdbcTemplate){
+    public PedidoRepositoryJDBC(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
 
     }
 
-
     @Override
     public Pedido submetePedido(Pedido ped) {
-        this.jdbcTemplate.update(
-            "INSERT INTO pedidos (id, estado, data_hora_pagamento, valor, imposto, desconto, valor_cobrado) " + 
-            "VALUES (?, ?, ?, ?, ?, ?, ?)",
-            ped.getId(), ped.getStatus(), ped.getDataHoraPagamento(), ped.getValor(), 
-            ped.getImpostos(), ped.getDesconto(), ped.getValorCobrado()
-        );
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        this.jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO pedidos (estado, data_hora_pagamento, valor, imposto, desconto, valor_cobrado) " +
+                            "VALUES (?, ?, ?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, ped.getStatus().toString());
+            ps.setTimestamp(2, java.sql.Timestamp.valueOf(ped.getDataHoraPagamento()));
+            ps.setDouble(3, ped.getValor());
+            ps.setDouble(4, ped.getImpostos());
+            ps.setDouble(5, ped.getDesconto());
+            ps.setDouble(6, ped.getValorCobrado());
+            return ps;
+        }, keyHolder);
+
+        long genId = keyHolder.getKey().longValue();
+        ped.setId(genId);
         return ped;
     }
 
     @Override
     public Pedido.Status getStatus(long id) {
         String sql = "SELECT p.estado" +
-                     "FROM pedidos p" +
-                     "WHERE p.id = ?";
+                "FROM pedidos p" +
+                "WHERE p.id = ?";
         List<String> statusList = this.jdbcTemplate.query(
-            sql,
-            ps -> ps.setLong(1, id),
-            (rs, rowNum) -> {
-                return rs.getString("estado");
-            }
-        );
+                sql,
+                ps -> ps.setLong(1, id),
+                (rs, rowNum) -> {
+                    return rs.getString("estado");
+                });
         String status = statusList.getFirst();
         switch (status) {
             case "NOVO":
@@ -74,5 +88,5 @@ public class PedidoRepositoryJDBC implements PedidoRepository{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'cancelarPedido'");
     }
-    
+
 }

@@ -12,9 +12,9 @@ import com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao.Presenters.Ped
 import com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao.Presenters.PedidoRequest;
 import com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao.Presenters.StatusPresenter;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.SubmetePedidoUC;
+import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Requests.SubmetePedidoRequest;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.StatusPedidoResponse;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.SubmetePedidoResponse;
-import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.RecuperaStatusPedidoUC;
 
 @RestController
@@ -38,20 +38,28 @@ public class PedidoController {
     @PostMapping("/submit")
     @CrossOrigin("*")
     public PedidoPresenter submetePedido(@RequestBody PedidoRequest pedido) {
-        SubmetePedidoResponse pedidoResponse = submetePedidoUC.run(
-                new Pedido(0, pedido.getCliente(), pedido.getDataHoraPagamento(), pedido.getItens(), pedido.getStatus(),
-                        pedido.getValor(), pedido.getImpostos(), pedido.getDesconto(), pedido.getValorCobrado()));
+
+        SubmetePedidoRequest applicationRequest = new SubmetePedidoRequest(
+                pedido.getCliente(),
+                pedido.getDataHoraPagamento(),
+                pedido.getItens().stream()
+                        .map(item -> new SubmetePedidoRequest.ItemRequest(item.getProdutoId(), item.getQuantidade()))
+                        .toList(),
+                pedido.getValor(),
+                pedido.getImpostos(),
+                pedido.getDesconto());
+
+        SubmetePedidoResponse pedidoResponse = submetePedidoUC.run(applicationRequest);
         PedidoPresenter pedidoPresenter = new PedidoPresenter(
-            pedidoResponse.getId(),
-            pedidoResponse.getCliente(),
-            pedidoResponse.getDataHoraPagamento(),
-            pedidoResponse.getItens(),
-            pedidoResponse.getStatus(),
-            pedidoResponse.getValor(),
-            pedidoResponse.getImpostos(),
-            pedidoResponse.getDesconto(),
-            pedidoResponse.getValorCobrado()
-        );
+                pedidoResponse.getId(),
+                pedidoResponse.getCliente(),
+                pedidoResponse.getDataHoraPagamento(),
+                pedidoResponse.getItens(),
+                pedidoResponse.getStatus(),
+                pedidoResponse.getValor(),
+                pedidoResponse.getImpostos(),
+                pedidoResponse.getDesconto(),
+                pedidoResponse.getValorCobrado());
         return pedidoPresenter;
     }
 

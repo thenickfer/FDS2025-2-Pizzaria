@@ -81,4 +81,8 @@ public class Pedido {
     public void setValorCobrado(double valorCobrado) {
         this.valorCobrado = valorCobrado;
     }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }
