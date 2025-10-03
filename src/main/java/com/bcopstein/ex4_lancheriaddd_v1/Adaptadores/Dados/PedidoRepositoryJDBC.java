@@ -1,5 +1,6 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Dados;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.PedidoRepository;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.ItemPedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido.Status;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Produto;
@@ -46,8 +48,28 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
 
         long genId = keyHolder.getKey().longValue();
         ped.setId(genId);
+
+        this.jdbcTemplate.update("INSERT INTO pedido_cliente (pedido_id, cliente_cpf) VALUES (?, ?)",
+                genId,
+                ped.getCliente().getCpf());
+
+        // usar batch update ao inves de string, string tem risco de sql injection
+        // POR ALGUM MOTIVO, ITEMPEDIDO NAO TEM ID????
+        /*
+         * List<Object[]> batchArgs = new ArrayList<>();
+         * 
+         * for (ItemPedido item : ped.getItens()) {
+         * batchArgs.add(new Object[]{genId, item.getId()});
+         * }
+         * 
+         * this.jdbcTemplate.
+         * batchUpdate("INSERT INTO pedido_itemPedido (id_pedido, id_itemPedido) VALUES (?, ?)"
+         * ,
+         * batchArgs);
+         */
+
         return ped;
-    }
+    }// Add pedido_Cliente e pedido_Itempedido
 
     @Override
     public Pedido.Status getStatus(long id) {

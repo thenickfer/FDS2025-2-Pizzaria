@@ -1,6 +1,7 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Aplicacao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,22 +13,26 @@ import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.ItemPedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Produto;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.PedidoService;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.ProdutoService;
 
 @Component
 public class SubmetePedidoUC {
     private PedidoService pedidoService;
-    private ProdutosRepository produtosRepository;
+    private ProdutoService produtosService;
 
     @Autowired
-    public SubmetePedidoUC(PedidoService pedidoService, ProdutosRepository produtosRepository) {
+    public SubmetePedidoUC(PedidoService pedidoService, ProdutoService produtosService) {
         this.pedidoService = pedidoService;
-        this.produtosRepository = produtosRepository;
+        this.produtosService = produtosService;
     }
 
     public SubmetePedidoResponse run(SubmetePedidoRequest request) {
+
+        Map<Long, Produto> map = produtosService.getMapping();
+
         List<ItemPedido> itens = request.getItens().stream()
                 .map(itemRequest -> {
-                    Produto produto = produtosRepository.recuperaProdutoPorid(itemRequest.getProdutoId());
+                    Produto produto = map.get(itemRequest.getProdutoId());
                     if (produto == null) {
                         throw new IllegalArgumentException(
                                 "Produto nao encontrado com ID: " + itemRequest.getProdutoId());
