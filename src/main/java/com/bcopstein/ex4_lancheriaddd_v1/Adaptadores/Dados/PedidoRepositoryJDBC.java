@@ -55,18 +55,15 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
 
         // usar batch update ao inves de string, string tem risco de sql injection
         // POR ALGUM MOTIVO, ITEMPEDIDO NAO TEM ID????
-        /*
-         * List<Object[]> batchArgs = new ArrayList<>();
-         * 
-         * for (ItemPedido item : ped.getItens()) {
-         * batchArgs.add(new Object[]{genId, item.getId()});
-         * }
-         * 
-         * this.jdbcTemplate.
-         * batchUpdate("INSERT INTO pedido_itemPedido (id_pedido, id_itemPedido) VALUES (?, ?)"
-         * ,
-         * batchArgs);
-         */
+
+        List<Object[]> batchArgs = new ArrayList<>();
+
+        for (ItemPedido item : ped.getItens()) {
+            batchArgs.add(new Object[] { genId, item.getItem().getId() });
+        }
+
+        this.jdbcTemplate.batchUpdate("INSERT INTO pedido_itemPedido (id_pedido, produto_id) VALUES (?, ?)",
+                batchArgs);
 
         return ped;
     }// Add pedido_Cliente e pedido_Itempedido

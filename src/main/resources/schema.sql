@@ -86,7 +86,7 @@ create table if not exists pedido_cliente(
 
 --Tabela de itemPedido
 create table if not exists itemPedido(
-  id bigint primary key,
+  produto_id bigint primary key,
   quantidade bigint not null
 );
 
