@@ -19,11 +19,14 @@ import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Produto;
 public class PedidoService {
     private PedidoRepository pedidoRepository;
     private ItemEstoqueRepository itemEstoqueRepository;
+    private ImpostoService impostoService;
 
     @Autowired
-    public PedidoService(PedidoRepository pedidoRepository, ItemEstoqueRepository itemEstoqueRepository) {
+    public PedidoService(PedidoRepository pedidoRepository, ItemEstoqueRepository itemEstoqueRepository,
+            ImpostoService impostoService) {
         this.pedidoRepository = pedidoRepository;
         this.itemEstoqueRepository = itemEstoqueRepository;
+        this.impostoService = impostoService;
 
     }
 
@@ -58,8 +61,10 @@ public class PedidoService {
 
         ped.setStatus(Pedido.Status.APROVADO);
         double val = ped.getItens().stream().map(i -> i.getItem()).mapToDouble(p -> p.getPreco()).sum();
+        ped.setValor(val);
 
         // add calc desconto e impostos
+        val += impostoService.calcularImposto(ped);
 
         ped = pedidoRepository.submetePedido(ped);
 
