@@ -31,9 +31,6 @@ public class PedidoRequest {
     private Cliente cliente;
     private LocalDateTime dataHoraPagamento;
     private List<ItemRequest> itens;
-    private double valor;
-    private double impostos;
-    private double desconto;
 
     // Getters and Setters
     public Cliente getCliente() {
@@ -60,27 +57,4 @@ public class PedidoRequest {
         this.itens = itens;
     }
 
-    public double getValor() {
-        return valor;
-    }
-
-    public void setValor(double valor) {
-        this.valor = valor;
-    }
-
-    public double getImpostos() {
-        return impostos;
-    }
-
-    public void setImpostos(double impostos) {
-        this.impostos = impostos;
-    }
-
-    public double getDesconto() {
-        return desconto;
-    }
-
-    public void setDesconto(double desconto) {
-        this.desconto = desconto;
-    }
 }

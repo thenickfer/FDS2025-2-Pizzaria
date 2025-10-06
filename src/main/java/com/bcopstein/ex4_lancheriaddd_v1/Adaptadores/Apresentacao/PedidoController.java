@@ -44,10 +44,7 @@ public class PedidoController {
                 pedido.getDataHoraPagamento(),
                 pedido.getItens().stream()
                         .map(item -> new SubmetePedidoRequest.ItemRequest(item.getProdutoId(), item.getQuantidade()))
-                        .toList(),
-                pedido.getValor(),
-                pedido.getImpostos(),
-                pedido.getDesconto());
+                        .toList());
 
         SubmetePedidoResponse pedidoResponse = submetePedidoUC.run(applicationRequest);
         PedidoPresenter pedidoPresenter = new PedidoPresenter(

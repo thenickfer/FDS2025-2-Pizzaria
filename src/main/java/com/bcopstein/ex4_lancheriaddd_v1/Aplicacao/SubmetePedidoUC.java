@@ -47,9 +47,9 @@ public class SubmetePedidoUC {
                 request.getDataHoraPagamento(),
                 itens,
                 Pedido.Status.NOVO,
-                request.getValor(),
-                request.getImpostos(),
-                request.getDesconto(),
+                0,
+                0,
+                0,
                 0.0);
 
         // Submit the pedido through the service

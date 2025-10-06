@@ -12,7 +12,8 @@ public class Pedido {
         PREPARACAO,
         PRONTO,
         TRANSPORTE,
-        ENTREGUE
+        ENTREGUE,
+        NEGADO
     }
 
     private long id;
@@ -64,6 +65,18 @@ public class Pedido {
 
     public double getValor() {
         return valor;
+    }
+
+    public void setValor(double valor) {
+        this.valor = valor;
+    }
+
+    public void setImpostos(double impostos) {
+        this.impostos = impostos;
+    }
+
+    public void setDesconto(double desconto) {
+        this.desconto = desconto;
     }
 
     public double getImpostos() {

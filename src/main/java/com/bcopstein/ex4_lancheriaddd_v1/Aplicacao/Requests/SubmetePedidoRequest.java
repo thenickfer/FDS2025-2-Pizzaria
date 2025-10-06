@@ -39,18 +39,12 @@ public class SubmetePedidoRequest {
     private Cliente cliente;
     private LocalDateTime dataHoraPagamento;
     private List<ItemRequest> itens;
-    private double valor;
-    private double impostos;
-    private double desconto;
 
     public SubmetePedidoRequest(Cliente cliente, LocalDateTime dataHoraPagamento,
-            List<ItemRequest> itens, double valor, double impostos, double desconto) {
+            List<ItemRequest> itens) {
         this.cliente = cliente;
         this.dataHoraPagamento = dataHoraPagamento;
         this.itens = itens;
-        this.valor = valor;
-        this.impostos = impostos;
-        this.desconto = desconto;
     }
 
     public Cliente getCliente() {
@@ -77,27 +71,4 @@ public class SubmetePedidoRequest {
         this.itens = itens;
     }
 
-    public double getValor() {
-        return valor;
-    }
-
-    public void setValor(double valor) {
-        this.valor = valor;
-    }
-
-    public double getImpostos() {
-        return impostos;
-    }
-
-    public void setImpostos(double impostos) {
-        this.impostos = impostos;
-    }
-
-    public double getDesconto() {
-        return desconto;
-    }
-
-    public void setDesconto(double desconto) {
-        this.desconto = desconto;
-    }
 }

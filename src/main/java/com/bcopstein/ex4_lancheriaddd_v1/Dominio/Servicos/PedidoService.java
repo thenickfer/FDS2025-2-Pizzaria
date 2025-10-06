@@ -13,6 +13,7 @@ import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Ingrediente;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.ItemEstoque;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.ItemPedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Produto;
 
 @Service
 public class PedidoService {
@@ -49,16 +50,16 @@ public class PedidoService {
 
                 ItemEstoque estoque = estoqueMap.get(item.getId());
                 if (estoque == null || estoque.getQuantidade() < 1) {
-                    ped.setStatus(Pedido.Status.AGUARDANDO);
+                    ped.setStatus(Pedido.Status.NEGADO);
                     return ped;
                 }
             }
         }
 
         ped.setStatus(Pedido.Status.APROVADO);
-        double val = ped.getValor();
-        val -= val * ped.getDesconto();
-        ped.setValorCobrado(val + val * ped.getImpostos());
+        double val = ped.getItens().stream().map(i -> i.getItem()).mapToDouble(p -> p.getPreco()).sum();
+
+        // add calc desconto e impostos
 
         ped = pedidoRepository.submetePedido(ped);
 
