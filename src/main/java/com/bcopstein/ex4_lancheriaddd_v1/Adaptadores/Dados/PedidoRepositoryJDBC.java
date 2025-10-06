@@ -11,8 +11,11 @@ import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.PedidoRepository;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Cliente;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.ItemPedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido.Status;
@@ -59,10 +62,10 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
         List<Object[]> batchArgs = new ArrayList<>();
 
         for (ItemPedido item : ped.getItens()) {
-            batchArgs.add(new Object[] { genId, item.getItem().getId() });
+            batchArgs.add(new Object[] { genId, item.getId() }); //ARRUMAR
         }
 
-        this.jdbcTemplate.batchUpdate("INSERT INTO pedido_itemPedido (id_pedido, produto_id) VALUES (?, ?)",
+        this.jdbcTemplate.batchUpdate("INSERT INTO pedido_itemPedido (id_pedido, id_itemPedido) VALUES (?, ?)",
                 batchArgs);
 
         return ped;
@@ -70,9 +73,9 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
 
     @Override
     public Pedido.Status getStatus(long id) {
-        String sql = "SELECT p.estado" +
-                "FROM pedidos p" +
-                "WHERE p.id = ?";
+        String sql = "SELECT p.estado " +
+                "FROM pedidos p " +
+                "WHERE p.id = ? ";
         List<String> statusList = this.jdbcTemplate.query(
                 sql,
                 ps -> ps.setLong(1, id),
@@ -80,6 +83,10 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
                     return rs.getString("estado");
                 });
         String status = statusList.getFirst();
+        return Pedido.Status.valueOf(status);
+    }
+
+    public Pedido.Status selection(String status){
         switch (status) {
             case "NOVO":
                 return Pedido.Status.NOVO;
@@ -97,6 +104,8 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
                 return Pedido.Status.TRANSPORTE;
             case "ENTREGUE":
                 return Pedido.Status.ENTREGUE;
+            case "NEGADO":
+                return Pedido.Status.NEGADO;
             default:
                 return null;
         }
@@ -109,40 +118,62 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
     }
 
     public List<Pedido> ultimos20Dias (String cpf){
-        String sql = "SELECT p.pedido_id, p.estado, p.data_hora_pagamento, p.valor, p.imposto, p.desconto, p.valor_cobrado" +
-                     "FROM cliente c" +
-                     "JOIN pedido_cliente pc on c.cliente_cpf = pc.cliente_cpf" +
-                     "JOIN pedido p on pc.pedido_id = p.id" +
+        String sql = "SELECT p.id as pedidoId, p.estado, p.data_hora_pagamento, p.valor, p.imposto, p.desconto, p.valor_cobrado, c.cpf, c.nome, c.celular, c.endereco, c.email " +
+                     "FROM cliente c " +
+                     "JOIN pedido_cliente pc on c.cliente_cpf = pc.cliente_cpf " +
+                     "JOIN pedido p on pc.pedido_id = p.id " +
+                     "WHERE c.cpf = ? and p.data_hora_pagamento >= DATEADD('DAY',-20,CURRENT_TIMESTAMP)";
+
+        //possivel consulta completa
+        String sql2 = "SELECT p.id as pedidoId, p.estado, p.data_hora_pagamento, p.valor, " +
+                     "p.imposto, p.desconto, p.valor_cobrado, c.cpf, c.nome, c.celular, " + 
+                     "c.endereco, c.email, iped.id_itemPedido as itemPedidoID, iped.quantidade as itemPedidoQuant " +
+                     "FROM cliente c " +
+                     "JOIN pedido_cliente pc on c.cliente_cpf = pc.cliente_cpf " +
+                     "JOIN pedido p on pc.pedido_id = p.id " +
+                     "LEFT JOIN pedido_itemPedido pedItem on p.id = pedItem.id_pedido " +
+                     "LEFT JOIN itemPedido iPed on pedItem.id_itemPedido = iped.id_itemPedido " +
+                     "LEFT JOIN itemPedido_produto iPedProd on iped.id_itemPedido = iPedProd.id_itemPedido " +
+                     "LEFT JOIN produtos prod on iPedProd.id_produto = prod.id " +
+
                      "WHERE c.cpf = ? and p.data_hora_pagamento >= DATEADD('DAY',-20,CURRENT_TIMESTAMP)";
         
-        List<Pedido> pedido = this.jdbcTemplate.query(
+        List<Pedido> pedidos = this.jdbcTemplate.query(
             sql, 
-            ps -> ps.setLong(1,cpf),
+            ps -> ps.setString(1,cpf),
             (rs,rowNum) ->{
-                long id = 
-                Cliente cli = 
-                LocalDateTime date = 
-                List<ItemPedido> itens =
-                Pedido.Status status = 
-                double valor = 
-                double impostos = 
-                double desconto =
-                double valorCobrado = 
-                
-                
+                long id = rs.getLong("pedidoId");
+
+                //variaveis cliente
+                String cpfAux = rs.getString("cpf");
+                String nome = rs.getString("nome");
+                String celular = rs.getString("celular");
+                String endereco = rs.getString("endereco");
+                String email = rs.getString("email");
+
+                Cliente cli = new Cliente (cpfAux,nome,celular,endereco,email);
+                Timestamp dateAux = rs.getTimestamp("data_hora_pagamento");
+                LocalDateTime date = dateAux.toLocalDateTime();
+
+                //daqui pra baixo: sera??
+                //variaveis itempedido
+                long idItemPedido = rs.getLong("itemPedidoID");
+                //Produto item
+                int quantidade = rs.Int("itemPedidoQuant");
+                ItemPedido itemPedi = new ItemPedido(idItemPedido, null, rowNum)
+
+                //daqui pra baixo: bom
+                List<ItemPedido> itens = null; //ARRUMAR
+                Pedido.Status status = Pedido.Status.valueOf(rs.getString("estado"));
+                double valor = rs.getDouble("valor");
+                double impostos = rs.getDouble("imposto");
+                double desconto = rs.getDouble("desconto");
+                double valorCobrado = rs.getDouble("valor_cobrado");
                 
                 Pedido p = new Pedido(id, cli,date,itens,status,valor,impostos,desconto,valorCobrado);
-                //adicionar em lista
-            }
-        
-        )
-
-        List<String> statusList = this.jdbcTemplate.query(
-                sql,
-                ps -> ps.setLong(1, id),
-                (rs, rowNum) -> {
-                    return rs.getString("estado");
-                });
+                return p;
+            });
+        return pedidos;
     }
 
 }
