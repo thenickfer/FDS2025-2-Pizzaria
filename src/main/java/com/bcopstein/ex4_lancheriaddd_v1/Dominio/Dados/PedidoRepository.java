@@ -8,4 +8,6 @@ public interface PedidoRepository {
     Pedido.Status getStatus(long id);
 
     Boolean cancelarPedido(long id);
+
+    List<Pedido> ultimos20Dias(String cpf);
 }
