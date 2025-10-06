@@ -108,4 +108,41 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
         throw new UnsupportedOperationException("Unimplemented method 'cancelarPedido'");
     }
 
+    public List<Pedido> ultimos20Dias (String cpf){
+        String sql = "SELECT p.pedido_id, p.estado, p.data_hora_pagamento, p.valor, p.imposto, p.desconto, p.valor_cobrado" +
+                     "FROM cliente c" +
+                     "JOIN pedido_cliente pc on c.cliente_cpf = pc.cliente_cpf" +
+                     "JOIN pedido p on pc.pedido_id = p.id" +
+                     "WHERE c.cpf = ? and p.data_hora_pagamento >= DATEADD('DAY',-20,CURRENT_TIMESTAMP)";
+        
+        List<Pedido> pedido = this.jdbcTemplate.query(
+            sql, 
+            ps -> ps.setLong(1,cpf),
+            (rs,rowNum) ->{
+                long id = 
+                Cliente cli = 
+                LocalDateTime date = 
+                List<ItemPedido> itens =
+                Pedido.Status status = 
+                double valor = 
+                double impostos = 
+                double desconto =
+                double valorCobrado = 
+                
+                
+                
+                Pedido p = new Pedido(id, cli,date,itens,status,valor,impostos,desconto,valorCobrado);
+                //adicionar em lista
+            }
+        
+        )
+
+        List<String> statusList = this.jdbcTemplate.query(
+                sql,
+                ps -> ps.setLong(1, id),
+                (rs, rowNum) -> {
+                    return rs.getString("estado");
+                });
+    }
+
 }
