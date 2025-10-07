@@ -67,8 +67,19 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
 
         List<Object[]> batchArgs = new ArrayList<>();
 
-        for (ItemPedido item : ped.getItens()) {
-            batchArgs.add(new Object[] { genId, item.getId() }); //ARRUMAR
+        for (int i = 0; i < ped.getItens().size(); i++) {
+            ItemPedido item = ped.getItens().get(i);
+            KeyHolder itemKeyHolder = new GeneratedKeyHolder();
+            this.jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(
+                        "INSERT INTO itemPedido (quantidade) VALUES (?)",
+                        Statement.RETURN_GENERATED_KEYS);
+                ps.setLong(1, item.getQuantidade());
+                return ps;
+            }, itemKeyHolder);
+            long itemPedidoId = itemKeyHolder.getKey().longValue();
+            ped.getItens().set(i, new ItemPedido(itemPedidoId, item.getItem(), item.getQuantidade()));
+            batchArgs.add(new Object[] { genId, itemPedidoId }); // ARRUMAR
         }
 
         this.jdbcTemplate.batchUpdate("INSERT INTO pedido_itemPedido (id_pedido, id_itemPedido) VALUES (?, ?)",
@@ -98,116 +109,123 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
         throw new UnsupportedOperationException("Unimplemented method 'cancelarPedido'");
     }
 
-    //arrumar preco de int para double?
+    // arrumar preco de int para double?
 
-    public List<Pedido> ultimos20Dias (String cpf){
+    public List<Pedido> ultimos20Dias(String cpf) {
         String sql = "SELECT p.id as pedidoId, p.estado, p.data_hora_pagamento, p.valor, " +
-                     "p.imposto, p.desconto, p.valor_cobrado, c.cpf, c.nome, c.celular, " + 
-                     "c.endereco, c.email, iped.id_itemPedido as itemPedidoID, iped.quantidade as itemPedidoQuant, " +
-                     "prod.id as produtoID, prod.descricao as produtoDesc, prod.preco as produtoPreco, " +
-                     "rc.id as receitaID, rc.titulo as receitaTitulo, " +
-                     "ing.id as ingreID, ing.descricao as ingreDesc " +
-                     "FROM cliente c " +
-                     "JOIN pedido_cliente pc on c.cliente_cpf = pc.cliente_cpf " +
-                     "JOIN pedido p on pc.pedido_id = p.id " +
-                     "LEFT JOIN pedido_itemPedido pedItem on p.id = pedItem.id_pedido " +
-                     "LEFT JOIN itemPedido iPed on pedItem.id_itemPedido = iped.id_itemPedido " +
-                     "LEFT JOIN itemPedido_produto iPedProd on iped.id_itemPedido = iPedProd.id_itemPedido " +
-                     "LEFT JOIN produtos prod on iPedProd.id_produto = prod.id " +
-                     "LEFT JOIN produto_receita prodReceita on prod.id = prodReceita.produto_id " +
-                     "LEFT JOIN receitas rc on prodReceita.receita_id = rc.id " +
-                     "LEFT JOIN receita_ingrediente ri on rc.id = ri.receita_id " +
-                     "LEFT JOIN ingredientes ing on ri.ingrediente_id = ing.id " +
-                     "WHERE c.cpf = ? and p.data_hora_pagamento >= DATEADD('DAY',-20,CURRENT_TIMESTAMP)";
-        
+                "p.imposto, p.desconto, p.valor_cobrado, c.cpf, c.nome, c.celular, " +
+                "c.endereco, c.email, iped.id_itemPedido as itemPedidoID, iped.quantidade as itemPedidoQuant, " +
+                "prod.id as produtoID, prod.descricao as produtoDesc, prod.preco as produtoPreco, " +
+                "rc.id as receitaID, rc.titulo as receitaTitulo, " +
+                "ing.id as ingreID, ing.descricao as ingreDesc " +
+                "FROM cliente c " +
+                "JOIN pedido_cliente pc on c.cliente_cpf = pc.cliente_cpf " +
+                "JOIN pedido p on pc.pedido_id = p.id " +
+                "LEFT JOIN pedido_itemPedido pedItem on p.id = pedItem.id_pedido " +
+                "LEFT JOIN itemPedido iPed on pedItem.id_itemPedido = iped.id_itemPedido " +
+                "LEFT JOIN itemPedido_produto iPedProd on iped.id_itemPedido = iPedProd.id_itemPedido " +
+                "LEFT JOIN produtos prod on iPedProd.id_produto = prod.id " +
+                "LEFT JOIN produto_receita prodReceita on prod.id = prodReceita.produto_id " +
+                "LEFT JOIN receitas rc on prodReceita.receita_id = rc.id " +
+                "LEFT JOIN receita_ingrediente ri on rc.id = ri.receita_id " +
+                "LEFT JOIN ingredientes ing on ri.ingrediente_id = ing.id " +
+                "WHERE c.cpf = ? and p.data_hora_pagamento >= DATEADD('DAY',-20,CURRENT_TIMESTAMP)";
+
         List<Pedido> pedidos = this.jdbcTemplate.query(
-            sql, 
-            ps -> ps.setString(1,cpf),
-            rs ->{
-                Map<Long, Pedido> pedidosMap = new LinkedHashMap<>(); //para nao ter pedidos repetidos
-                Map<Long,Set<Long>> ingredientesPorItem = new HashMap<>(); //para nao ter o mesmo ingrediente varias vezes
+                sql,
+                ps -> ps.setString(1, cpf),
+                rs -> {
+                    Map<Long, Pedido> pedidosMap = new LinkedHashMap<>(); // para nao ter pedidos repetidos
+                    Map<Long, Set<Long>> ingredientesPorItem = new HashMap<>(); // para nao ter o mesmo ingrediente
+                                                                                // varias vezes
 
-                while(rs.next()){
-                    long id = rs.getLong("pedidoId");
-                    Pedido p = pedidosMap.get(id);
-                    if (p == null){
-                        //variaveis cliente
-                        String cpfAux = rs.getString("cpf");
-                        String nome = rs.getString("nome");
-                        String celular = rs.getString("celular");
-                        String endereco = rs.getString("endereco");
-                        String email = rs.getString("email");
-                        Cliente cli = new Cliente (cpfAux,nome,celular,endereco,email);
+                    while (rs.next()) {
+                        long id = rs.getLong("pedidoId");
+                        Pedido p = pedidosMap.get(id);
+                        if (p == null) {
+                            // variaveis cliente
+                            String cpfAux = rs.getString("cpf");
+                            String nome = rs.getString("nome");
+                            String celular = rs.getString("celular");
+                            String endereco = rs.getString("endereco");
+                            String email = rs.getString("email");
+                            Cliente cli = new Cliente(cpfAux, nome, celular, endereco, email);
 
-                        //data
-                        Timestamp dateAux = rs.getTimestamp("data_hora_pagamento");
-                        LocalDateTime date = dateAux != null ? dateAux.toLocalDateTime() : null;
+                            // data
+                            Timestamp dateAux = rs.getTimestamp("data_hora_pagamento");
+                            LocalDateTime date = dateAux != null ? dateAux.toLocalDateTime() : null;
 
-                        //status
-                        String estado = rs.getString("estado");
-                        Pedido.Status status = estado != null ? Pedido.Status.valueOf(estado) : null;
+                            // status
+                            String estado = rs.getString("estado");
+                            Pedido.Status status = estado != null ? Pedido.Status.valueOf(estado) : null;
 
-                        //valores
-                        double valor = rs.getDouble("valor");
-                        double impostos = rs.getDouble("imposto");
-                        double desconto = rs.getDouble("desconto");
-                        double valorCobrado = rs.getDouble("valor_cobrado");
+                            // valores
+                            double valor = rs.getDouble("valor");
+                            double impostos = rs.getDouble("imposto");
+                            double desconto = rs.getDouble("desconto");
+                            double valorCobrado = rs.getDouble("valor_cobrado");
 
-                        p = new Pedido(id, cli,date,new ArrayList<>(),status,valor,impostos,desconto,valorCobrado);
-                        pedidosMap.put(id, p);
-                    }
-
-                    //item do pedido
-                    Long idItemPedido = rs.getObject("itemPedidoID", Long.class); 
-                    if (idItemPedido == null){continue;}
-
-                    ItemPedido itemPedi = null;
-                    for (ItemPedido it: p.getItens()){
-                        if(it.getId() == idItemPedido){
-                            itemPedi = it;
-                            break;
+                            p = new Pedido(id, cli, date, new ArrayList<>(), status, valor, impostos, desconto,
+                                    valorCobrado);
+                            pedidosMap.put(id, p);
                         }
-                    }
-                
-                    if (itemPedi == null){
-                        int quantidadeItemPedido = rs.getInt("itemPedidoQuant");
 
-                        //produto
-                        Long idProduto = rs.getObject("produtoID",Long.class);
-                        Produto produto = null;
-                        if (idProduto != null){
-                            String descProduto = rs.getString("produtoDesc");
-                            int precoProduto = rs.getInt("produtoPreco"); //alterar???
+                        // item do pedido
+                        Long idItemPedido = rs.getObject("itemPedidoID", Long.class);
+                        if (idItemPedido == null) {
+                            continue;
+                        }
 
-                            //receita
-                            Long idReceita = rs.getObject("receitaID",Long.class);
-                            Receita receita = null;
-                            if (idReceita != null){
-                                String tituloReceita = rs.getString("receitaTitulo");
-                                receita = new Receita(idReceita, tituloReceita, new ArrayList<>());
+                        ItemPedido itemPedi = null;
+                        for (ItemPedido it : p.getItens()) {
+                            if (it.getId() == idItemPedido) {
+                                itemPedi = it;
+                                break;
                             }
-                            produto = new Produto(idProduto, descProduto, receita, precoProduto);
                         }
 
-                        itemPedi = new ItemPedido(idItemPedido, produto, quantidadeItemPedido);
-                        p.getItens().add(itemPedi);
-                    }
+                        if (itemPedi == null) {
+                            int quantidadeItemPedido = rs.getInt("itemPedidoQuant");
 
-                    //ingredientes
-                    Long idReceita2 = rs.getObject("receitaID",Long.class);
-                    Long idIngre = rs.getObject("ingreID",Long.class);
-                    if (idReceita2 != null && idIngre != null && itemPedi.getItem() != null && itemPedi.getItem().getReceita() != null){
-                        Set<Long> set = ingredientesPorItem.computeIfAbsent(idItemPedido, k -> new HashSet<>());
-                        if (set.add(idIngre)){
-                            String descIngre = rs.getString("ingreDesc");
-                            Ingrediente ingrediente = new Ingrediente(idIngre, descIngre);
-                            List<Ingrediente> listaIng = itemPedi.getItem().getReceita().getIngredientes();
-                            if (listaIng != null){listaIng.add(ingrediente);}
+                            // produto
+                            Long idProduto = rs.getObject("produtoID", Long.class);
+                            Produto produto = null;
+                            if (idProduto != null) {
+                                String descProduto = rs.getString("produtoDesc");
+                                int precoProduto = rs.getInt("produtoPreco"); // alterar???
+
+                                // receita
+                                Long idReceita = rs.getObject("receitaID", Long.class);
+                                Receita receita = null;
+                                if (idReceita != null) {
+                                    String tituloReceita = rs.getString("receitaTitulo");
+                                    receita = new Receita(idReceita, tituloReceita, new ArrayList<>());
+                                }
+                                produto = new Produto(idProduto, descProduto, receita, precoProduto);
+                            }
+
+                            itemPedi = new ItemPedido(idItemPedido, produto, quantidadeItemPedido);
+                            p.getItens().add(itemPedi);
+                        }
+
+                        // ingredientes
+                        Long idReceita2 = rs.getObject("receitaID", Long.class);
+                        Long idIngre = rs.getObject("ingreID", Long.class);
+                        if (idReceita2 != null && idIngre != null && itemPedi.getItem() != null
+                                && itemPedi.getItem().getReceita() != null) {
+                            Set<Long> set = ingredientesPorItem.computeIfAbsent(idItemPedido, k -> new HashSet<>());
+                            if (set.add(idIngre)) {
+                                String descIngre = rs.getString("ingreDesc");
+                                Ingrediente ingrediente = new Ingrediente(idIngre, descIngre);
+                                List<Ingrediente> listaIng = itemPedi.getItem().getReceita().getIngredientes();
+                                if (listaIng != null) {
+                                    listaIng.add(ingrediente);
+                                }
+                            }
                         }
                     }
-                }
-                return new ArrayList<>(pedidosMap.values());
-            });
+                    return new ArrayList<>(pedidosMap.values());
+                });
         return pedidos;
     }
 
