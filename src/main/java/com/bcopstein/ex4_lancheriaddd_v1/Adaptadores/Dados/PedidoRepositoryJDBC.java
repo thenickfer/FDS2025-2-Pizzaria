@@ -1,7 +1,12 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Dados;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,6 +21,7 @@ import java.time.LocalDateTime;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.PedidoRepository;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Cliente;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Ingrediente;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.ItemPedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido.Status;
@@ -86,48 +92,21 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
         return Pedido.Status.valueOf(status);
     }
 
-    public Pedido.Status selection(String status){
-        switch (status) {
-            case "NOVO":
-                return Pedido.Status.NOVO;
-            case "APROVADO":
-                return Pedido.Status.APROVADO;
-            case "PAGO":
-                return Pedido.Status.PAGO;
-            case "AGUARDANDO":
-                return Pedido.Status.AGUARDANDO;
-            case "PREPARACAO":
-                return Pedido.Status.PREPARACAO;
-            case "PRONTO":
-                return Pedido.Status.PRONTO;
-            case "TRANSPORTE":
-                return Pedido.Status.TRANSPORTE;
-            case "ENTREGUE":
-                return Pedido.Status.ENTREGUE;
-            case "NEGADO":
-                return Pedido.Status.NEGADO;
-            default:
-                return null;
-        }
-    }
-
     @Override
     public Boolean cancelarPedido(long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'cancelarPedido'");
     }
 
-    public List<Pedido> ultimos20Dias (String cpf){
-        String sql = "SELECT p.id as pedidoId, p.estado, p.data_hora_pagamento, p.valor, p.imposto, p.desconto, p.valor_cobrado, c.cpf, c.nome, c.celular, c.endereco, c.email " +
-                     "FROM cliente c " +
-                     "JOIN pedido_cliente pc on c.cliente_cpf = pc.cliente_cpf " +
-                     "JOIN pedido p on pc.pedido_id = p.id " +
-                     "WHERE c.cpf = ? and p.data_hora_pagamento >= DATEADD('DAY',-20,CURRENT_TIMESTAMP)";
+    //arrumar preco de int para double?
 
-        //possivel consulta completa
-        String sql2 = "SELECT p.id as pedidoId, p.estado, p.data_hora_pagamento, p.valor, " +
+    public List<Pedido> ultimos20Dias (String cpf){
+        String sql = "SELECT p.id as pedidoId, p.estado, p.data_hora_pagamento, p.valor, " +
                      "p.imposto, p.desconto, p.valor_cobrado, c.cpf, c.nome, c.celular, " + 
-                     "c.endereco, c.email, iped.id_itemPedido as itemPedidoID, iped.quantidade as itemPedidoQuant " +
+                     "c.endereco, c.email, iped.id_itemPedido as itemPedidoID, iped.quantidade as itemPedidoQuant, " +
+                     "prod.id as produtoID, prod.descricao as produtoDesc, prod.preco as produtoPreco, " +
+                     "rc.id as receitaID, rc.titulo as receitaTitulo, " +
+                     "ing.id as ingreID, ing.descricao as ingreDesc " +
                      "FROM cliente c " +
                      "JOIN pedido_cliente pc on c.cliente_cpf = pc.cliente_cpf " +
                      "JOIN pedido p on pc.pedido_id = p.id " +
@@ -135,43 +114,99 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
                      "LEFT JOIN itemPedido iPed on pedItem.id_itemPedido = iped.id_itemPedido " +
                      "LEFT JOIN itemPedido_produto iPedProd on iped.id_itemPedido = iPedProd.id_itemPedido " +
                      "LEFT JOIN produtos prod on iPedProd.id_produto = prod.id " +
-
+                     "LEFT JOIN produto_receita prodReceita on prod.id = prodReceita.produto_id " +
+                     "LEFT JOIN receitas rc on prodReceita.receita_id = rc.id " +
+                     "LEFT JOIN receita_ingrediente ri on rc.id = ri.receita_id " +
+                     "LEFT JOIN ingredientes ing on ri.ingrediente_id = ing.id " +
                      "WHERE c.cpf = ? and p.data_hora_pagamento >= DATEADD('DAY',-20,CURRENT_TIMESTAMP)";
         
         List<Pedido> pedidos = this.jdbcTemplate.query(
             sql, 
             ps -> ps.setString(1,cpf),
-            (rs,rowNum) ->{
-                long id = rs.getLong("pedidoId");
+            rs ->{
+                Map<Long, Pedido> pedidosMap = new LinkedHashMap<>(); //para nao ter pedidos repetidos
+                Map<Long,Set<Long>> ingredientesPorItem = new HashMap<>(); //para nao ter o mesmo ingrediente varias vezes
 
-                //variaveis cliente
-                String cpfAux = rs.getString("cpf");
-                String nome = rs.getString("nome");
-                String celular = rs.getString("celular");
-                String endereco = rs.getString("endereco");
-                String email = rs.getString("email");
+                while(rs.next()){
+                    long id = rs.getLong("pedidoId");
+                    Pedido p = pedidosMap.get(id);
+                    if (p == null){
+                        //variaveis cliente
+                        String cpfAux = rs.getString("cpf");
+                        String nome = rs.getString("nome");
+                        String celular = rs.getString("celular");
+                        String endereco = rs.getString("endereco");
+                        String email = rs.getString("email");
+                        Cliente cli = new Cliente (cpfAux,nome,celular,endereco,email);
 
-                Cliente cli = new Cliente (cpfAux,nome,celular,endereco,email);
-                Timestamp dateAux = rs.getTimestamp("data_hora_pagamento");
-                LocalDateTime date = dateAux.toLocalDateTime();
+                        //data
+                        Timestamp dateAux = rs.getTimestamp("data_hora_pagamento");
+                        LocalDateTime date = dateAux != null ? dateAux.toLocalDateTime() : null;
 
-                //daqui pra baixo: sera??
-                //variaveis itempedido
-                long idItemPedido = rs.getLong("itemPedidoID");
-                //Produto item
-                int quantidade = rs.Int("itemPedidoQuant");
-                ItemPedido itemPedi = new ItemPedido(idItemPedido, null, rowNum)
+                        //status
+                        String estado = rs.getString("estado");
+                        Pedido.Status status = estado != null ? Pedido.Status.valueOf(estado) : null;
 
-                //daqui pra baixo: bom
-                List<ItemPedido> itens = null; //ARRUMAR
-                Pedido.Status status = Pedido.Status.valueOf(rs.getString("estado"));
-                double valor = rs.getDouble("valor");
-                double impostos = rs.getDouble("imposto");
-                double desconto = rs.getDouble("desconto");
-                double valorCobrado = rs.getDouble("valor_cobrado");
+                        //valores
+                        double valor = rs.getDouble("valor");
+                        double impostos = rs.getDouble("imposto");
+                        double desconto = rs.getDouble("desconto");
+                        double valorCobrado = rs.getDouble("valor_cobrado");
+
+                        p = new Pedido(id, cli,date,new ArrayList<>(),status,valor,impostos,desconto,valorCobrado);
+                        pedidosMap.put(id, p);
+                    }
+
+                    //item do pedido
+                    Long idItemPedido = rs.getObject("itemPedidoID", Long.class); 
+                    if (idItemPedido == null){continue;}
+
+                    ItemPedido itemPedi = null;
+                    for (ItemPedido it: p.getItens()){
+                        if(it.getId() == idItemPedido){
+                            itemPedi = it;
+                            break;
+                        }
+                    }
                 
-                Pedido p = new Pedido(id, cli,date,itens,status,valor,impostos,desconto,valorCobrado);
-                return p;
+                    if (itemPedi == null){
+                        int quantidadeItemPedido = rs.getInt("itemPedidoQuant");
+
+                        //produto
+                        Long idProduto = rs.getObject("produtoID",Long.class);
+                        Produto produto = null;
+                        if (idProduto != null){
+                            String descProduto = rs.getString("produtoDesc");
+                            int precoProduto = rs.getInt("produtoPreco"); //alterar???
+
+                            //receita
+                            Long idReceita = rs.getObject("receitaID",Long.class);
+                            Receita receita = null;
+                            if (idReceita != null){
+                                String tituloReceita = rs.getString("receitaTitulo");
+                                receita = new Receita(idReceita, tituloReceita, new ArrayList<>());
+                            }
+                            produto = new Produto(idProduto, descProduto, receita, precoProduto);
+                        }
+
+                        itemPedi = new ItemPedido(idItemPedido, produto, quantidadeItemPedido);
+                        p.getItens().add(itemPedi);
+                    }
+
+                    //ingredientes
+                    Long idReceita2 = rs.getObject("receitaID",Long.class);
+                    Long idIngre = rs.getObject("ingreID",Long.class);
+                    if (idReceita2 != null && idIngre != null && itemPedi.getItem() != null && itemPedi.getItem().getReceita() != null){
+                        Set<Long> set = ingredientesPorItem.computeIfAbsent(idItemPedido, k -> new HashSet<>());
+                        if (set.add(idIngre)){
+                            String descIngre = rs.getString("ingreDesc");
+                            Ingrediente ingrediente = new Ingrediente(idIngre, descIngre);
+                            List<Ingrediente> listaIng = itemPedi.getItem().getReceita().getIngredientes();
+                            if (listaIng != null){listaIng.add(ingrediente);}
+                        }
+                    }
+                }
+                return new ArrayList<>(pedidosMap.values());
             });
         return pedidos;
     }
