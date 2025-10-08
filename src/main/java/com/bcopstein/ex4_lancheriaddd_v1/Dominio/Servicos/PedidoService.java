@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.ItemEstoqueRepository;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.EstoqueService;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.PedidoRepository;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Ingrediente;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.ItemEstoque;
@@ -18,15 +18,15 @@ import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Produto;
 @Service
 public class PedidoService {
     private PedidoRepository pedidoRepository;
-    private ItemEstoqueRepository itemEstoqueRepository;
+    private EstoqueService estoqueService;
     private ImpostoService impostoService;
     private DescontoService descontoService;
 
     @Autowired
-    public PedidoService(PedidoRepository pedidoRepository, ItemEstoqueRepository itemEstoqueRepository,
+    public PedidoService(PedidoRepository pedidoRepository, EstoqueService estoqueService,
             ImpostoService impostoService, DescontoService descontoService) {
         this.pedidoRepository = pedidoRepository;
-        this.itemEstoqueRepository = itemEstoqueRepository;
+        this.estoqueService = estoqueService;
         this.impostoService = impostoService;
         this.descontoService = descontoService;
 
@@ -38,30 +38,10 @@ public class PedidoService {
             throw new IllegalArgumentException("Pedido must have at least one item");
         }
 
-        List<ItemEstoque> todosItensEstoque = itemEstoqueRepository.getAll();
-        Map<Long, ItemEstoque> estoqueMap = todosItensEstoque.stream()
-                .collect(Collectors.toMap(
-                        itemEstoque -> itemEstoque.getIngrediente().getId(),
-                        itemEstoque -> itemEstoque));
+        ped = estoqueService.avaliarPedido(ped);
+        if (ped.getStatus() == Pedido.Status.NEGADO)
+            return ped;
 
-        for (ItemPedido prod : ped.getItens()) {
-            if (prod == null || prod.getItem() == null || prod.getItem().getReceita() == null) {
-                throw new IllegalArgumentException("All items must have valid products and recipes");
-            }
-
-            for (Ingrediente item : prod.getItem().getReceita().getIngredientes()) {
-                if (item == null)
-                    continue;
-
-                ItemEstoque estoque = estoqueMap.get(item.getId());
-                if (estoque == null || estoque.getQuantidade() < 1) {
-                    ped.setStatus(Pedido.Status.NEGADO);
-                    return ped;
-                }
-            }
-        }
-
-        ped.setStatus(Pedido.Status.APROVADO);
         double val = ped.getItens().stream().map(i -> i.getItem()).mapToDouble(p -> p.getPreco()).sum();
         ped.setValor(val);
 
