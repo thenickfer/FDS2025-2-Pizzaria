@@ -50,16 +50,30 @@ public class PedidoService {
 
         val += impostoService.calcularImposto(ped);
 
+        ped.setValor(val);
+
         ped = pedidoRepository.submetePedido(ped);
 
         return ped;
     }
 
     public Pedido.Status getStatus(long id) {
-        return pedidoRepository.getStatus(id);
+        Pedido ped = pedidoRepository.pagarPedido(id);
+
+        if (ped == null || ped.getStatus() == null){
+            throw new IllegalArgumentException("pedido must exist");
+        }
+
+        return ped.getStatus();
     }
 
     public Boolean cancelarPedido(long id) {
-        return pedidoRepository.cancelarPedido(id);
+        Boolean ped = pedidoRepository.cancelarPedido(id);
+
+        if (!ped){
+            throw new IllegalArgumentException("pedido must exist");
+        }
+
+        return true;
     }
 }
