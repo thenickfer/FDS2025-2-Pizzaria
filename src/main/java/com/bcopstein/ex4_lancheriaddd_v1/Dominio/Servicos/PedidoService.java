@@ -21,14 +21,19 @@ public class PedidoService {
     private EstoqueService estoqueService;
     private ImpostoService impostoService;
     private DescontoService descontoService;
+    private PagamentoService pagamentoService;
+    private CozinhaService cozinhaService;
 
     @Autowired
     public PedidoService(PedidoRepository pedidoRepository, EstoqueService estoqueService,
-            ImpostoService impostoService, DescontoService descontoService) {
+            ImpostoService impostoService, DescontoService descontoService, 
+            PagamentoService pagamentoService, CozinhaService cozinhaService) {
         this.pedidoRepository = pedidoRepository;
         this.estoqueService = estoqueService;
         this.impostoService = impostoService;
         this.descontoService = descontoService;
+        this.pagamentoService = pagamentoService;
+        this.cozinhaService = cozinhaService;
 
     }
 
@@ -76,4 +81,15 @@ public class PedidoService {
 
         return true;
     }
+
+    public Pedido mandaPedido(Pedido ped){
+        if (ped == null){
+            throw new IllegalArgumentException("pedido must exist"); 
+        }
+        
+        ped = pagamentoService.processarPagamento(ped);
+        ped = cozinhaService.chegadaDePedido(ped);
+        return ped;
+    }
+
 }
