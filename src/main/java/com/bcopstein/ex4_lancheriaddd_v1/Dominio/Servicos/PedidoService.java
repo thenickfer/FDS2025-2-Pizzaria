@@ -20,13 +20,15 @@ public class PedidoService {
     private PedidoRepository pedidoRepository;
     private ItemEstoqueRepository itemEstoqueRepository;
     private ImpostoService impostoService;
+    private DescontoService descontoService;
 
     @Autowired
     public PedidoService(PedidoRepository pedidoRepository, ItemEstoqueRepository itemEstoqueRepository,
-            ImpostoService impostoService) {
+            ImpostoService impostoService, DescontoService descontoService) {
         this.pedidoRepository = pedidoRepository;
         this.itemEstoqueRepository = itemEstoqueRepository;
         this.impostoService = impostoService;
+        this.descontoService = descontoService;
 
     }
 
@@ -64,6 +66,8 @@ public class PedidoService {
         ped.setValor(val);
 
         // add calc desconto e impostos
+        val -= descontoService.calcularDesconto(ped);
+
         val += impostoService.calcularImposto(ped);
 
         ped = pedidoRepository.submetePedido(ped);

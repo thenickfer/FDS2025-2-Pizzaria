@@ -37,7 +37,7 @@ public class SubmetePedidoUC {
                         throw new IllegalArgumentException(
                                 "Produto nao encontrado com ID: " + itemRequest.getProdutoId());
                     }
-                    return new ItemPedido(produto, itemRequest.getQuantidade());
+                    return new ItemPedido(0,produto, itemRequest.getQuantidade());
                 })
                 .toList();
 
