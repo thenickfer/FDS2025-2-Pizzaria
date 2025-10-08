@@ -21,6 +21,7 @@ public class PedidoService {
     private EstoqueService estoqueService;
     private ImpostoService impostoService;
     private DescontoService descontoService;
+    private PagamentoService pagamentoService;
 
     @Autowired
     public PedidoService(PedidoRepository pedidoRepository, EstoqueService estoqueService,
@@ -76,4 +77,7 @@ public class PedidoService {
 
         return true;
     }
+
+    //metodo para mandar pedido para o servico de pagamento
+
 }
