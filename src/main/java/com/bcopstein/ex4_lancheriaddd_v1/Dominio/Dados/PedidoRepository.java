@@ -18,5 +18,5 @@ public interface PedidoRepository {
 
     Boolean atualizarStatus(long id, Pedido.Status status);
 
-    List<Pedido> porPeriodo(LocalDateTime ini, LocalDateTime fim);
+    List<Pedido> porPeriodo(String cpf, LocalDateTime ini, LocalDateTime fim);
 }

@@ -41,7 +41,7 @@ public class CozinhaService {
         }
     }
 
-    public synchronized void pedidoPronto() {
+    public synchronized void pedidoPronto() { //chamar metodo para mexer no repositorio
         emPreparacao.setStatus(Pedido.Status.PRONTO);
         filaSaida.add(emPreparacao);
         System.out.println("Pedido na fila de saida: " + emPreparacao);

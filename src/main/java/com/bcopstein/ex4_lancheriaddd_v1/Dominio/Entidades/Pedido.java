@@ -13,7 +13,8 @@ public class Pedido {
         PRONTO,
         TRANSPORTE,
         ENTREGUE,
-        NEGADO
+        NEGADO,
+        CANCELADO
     }
 
     private long id;
