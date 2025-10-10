@@ -63,9 +63,9 @@ public class PedidoService {
     }
 
     public Pedido.Status getStatus(long id) {
-        Pedido ped = pedidoRepository.pagarPedido(id);
+        Boolean ped = pedidoRepository.pagarPedido(id);
 
-        if (ped == null || ped.getStatus() == null){
+        if (!ped){
             throw new IllegalArgumentException("pedido must exist");
         }
 

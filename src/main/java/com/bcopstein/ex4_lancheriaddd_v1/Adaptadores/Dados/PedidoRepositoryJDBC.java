@@ -369,7 +369,64 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
         return pedidos;
     }
 
+    public Pedido getPedidoPorId(long id){
+        String sql = "SELECT p.id as pedidoId, p.estado, p.data_hora_pagamento, p.valor, p.imposto, " +
+            "p.desconto, p.valor_cobrado, ip.id_itemPedido as itemPedidoID, ip.quantidade as itemPedidoQuant, " +
+            "c.cpf, c.nome, c.celular, c.endereco, c.email " +
+            "FROM pedidos p " +
+            "JOIN pedido_cliente pc on pc.pedido_id = p.id " +
+            "JOIN clientes c on c.cpf = pc.cliente_cpf " +
+            "LEFT JOIN pedido_itemPedido pi on pi.id_pedido = p.id " +
+            "LEFT JOIN itemPedido ip on ip.id_itemPedido = pi.id_itemPedido " +
+            "WHERE p.id = ?";
 
-    
+        Pedido pedido = this.jdbcTemplate.query(
+            sql,
+            ps -> ps.setLong(1, id),
+            rs -> {
+                Pedido resultPedido = null;
+                List<ItemPedido> itens = new ArrayList<>();
+                while (rs.next()) {
+                    if (resultPedido == null) {
+                        long pedidoId = rs.getLong("pedidoId");
+                        String pedidoEstado = rs.getString("estado");
+                        Timestamp pedidoDataHoraPagemento = rs.getTimestamp("data_hora_pagamento");
+                        double pedidoValor = rs.getDouble("valor");
+                        double pedidoImposto = rs.getDouble("imposto");
+                        double pedidoDesconto = rs.getDouble("desconto");
+                        double pedidoValorCobrado = rs.getDouble("valor_cobrado");
+
+                        Cliente cliente = new Cliente(
+                            rs.getString("cpf"),
+                            rs.getString("nome"),
+                            rs.getString("celular"),
+                            rs.getString("endereco"),
+                            rs.getString("email")
+                        );
+
+                        resultPedido = new Pedido(
+                            pedidoId,
+                            cliente,
+                            pedidoDataHoraPagemento != null ? pedidoDataHoraPagemento.toLocalDateTime() : null,
+                            itens,
+                            Pedido.Status.valueOf(pedidoEstado),
+                            pedidoValor,
+                            pedidoImposto,
+                            pedidoDesconto,
+                            pedidoValorCobrado
+                        );
+                    }
+                    Long idItemPedido = (Long) rs.getObject("itemPedidoID"); 
+                    Integer quantidade = (Integer) rs.getObject("itemPedidoQuant"); 
+                    if(idItemPedido != null){
+                        ItemPedido itemPedido = new ItemPedido(idItemPedido, null, quantidade);
+                        itens.add(itemPedido);
+                    }
+                }
+                return resultPedido;
+            }
+        );
+        return pedido;
+    }
 
 }
