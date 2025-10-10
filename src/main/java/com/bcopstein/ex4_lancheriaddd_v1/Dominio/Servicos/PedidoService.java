@@ -63,9 +63,9 @@ public class PedidoService {
     }
 
     public Pedido.Status getStatus(long id) {
-        Pedido ped = pedidoRepository.pagarPedido(id);
+        Pedido ped = pedidoRepository.getPedidoPorId(id);
 
-        if (ped == null || ped.getStatus() == null){
+        if (ped != null){
             throw new IllegalArgumentException("pedido must exist");
         }
 
@@ -82,14 +82,14 @@ public class PedidoService {
         return true;
     }
 
-    public Pedido mandaPedido(Pedido ped){
-        if (ped == null){
-            throw new IllegalArgumentException("pedido must exist"); 
-        }
+    // public Pedido mandaPedido(Pedido ped){
+    //     if (ped == null){
+    //         throw new IllegalArgumentException("pedido must exist"); 
+    //     }
         
-        ped = pagamentoService.processarPagamento(ped);
-        ped = cozinhaService.chegadaDePedido(ped);
-        return ped;
-    }
+    //     ped = pagamentoService.processarPagamento(ped);
+    //     cozinhaService.chegadaDePedido(ped);
+    //     return ped;
+    // }
 
 }
