@@ -14,7 +14,7 @@ public class ClienteService {
         this.clientesRepository = clientesRepository;
     }
 
-    public Cliente getByID(String cpf) {
+    public Cliente getByCpf(String cpf) {
         Cliente cliente = clientesRepository.getByCpf(cpf);
         if (cliente == null) {
             throw new IllegalArgumentException("Cliente não encontrado com Cpf: " + cpf);
