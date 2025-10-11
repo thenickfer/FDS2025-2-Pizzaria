@@ -9,12 +9,12 @@ public class SubmetePedidoRequest {
 
     public static class ItemRequest {
         private long produtoId;
-        private int quantidade;
+        private long quantidade;
 
         public ItemRequest() {
         }
 
-        public ItemRequest(long produtoId, int quantidade) {
+        public ItemRequest(long produtoId, long quantidade) {
             this.produtoId = produtoId;
             this.quantidade = quantidade;
         }
@@ -27,11 +27,11 @@ public class SubmetePedidoRequest {
             this.produtoId = produtoId;
         }
 
-        public int getQuantidade() {
+        public long getQuantidade() {
             return quantidade;
         }
 
-        public void setQuantidade(int quantidade) {
+        public void setQuantidade(long quantidade) {
             this.quantidade = quantidade;
         }
     }

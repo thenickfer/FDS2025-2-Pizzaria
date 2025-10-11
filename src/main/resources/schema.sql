@@ -95,7 +95,7 @@ create table if not exists itemPedido_produto(
   id_itemPedido bigint not null,
   id_produto bigint not null,
   primary key(id_itemPedido, id_produto),
-  foreign key(id_itemPedido) references itemPedido(id),
+  foreign key(id_itemPedido) references itemPedido(id_itemPedido),
   foreign key(id_produto) references produtos(id)
 );
 
@@ -105,5 +105,5 @@ create table if not exists pedido_itemPedido(
   id_itemPedido bigint not null,
   primary key(id_pedido, id_itemPedido),
   foreign key(id_pedido) references pedidos(id),
-  foreign key(id_itemPedido) references itemPedido(id)
+  foreign key(id_itemPedido) references itemPedido(id_itemPedido)
 );

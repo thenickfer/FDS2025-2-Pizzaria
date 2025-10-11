@@ -3,10 +3,12 @@ package com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Dados;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.ClientesRepository;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Cliente;
 
+@Component
 public class ClientesRepositoryJDBC implements ClientesRepository {
     private JdbcTemplate jdbcTemplate;
 
