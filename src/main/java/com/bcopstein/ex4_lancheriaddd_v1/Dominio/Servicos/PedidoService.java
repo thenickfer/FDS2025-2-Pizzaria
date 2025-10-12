@@ -37,7 +37,7 @@ public class PedidoService {
         return ped.getStatus();
     }
 
-    public Boolean cancelarPedido(long id) {
+    public boolean cancelarPedido(long id) {
         Boolean ped = pedidoRepository.cancelarPedido(id);
 
         if (!ped) {
@@ -45,6 +45,10 @@ public class PedidoService {
         }
 
         return true;
+    }
+
+    public boolean exists(long id) {
+        return pedidoRepository.getPedidoPorId(id) != null;
     }
 
     // public Pedido mandaPedido(Pedido ped){

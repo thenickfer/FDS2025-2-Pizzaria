@@ -10,13 +10,13 @@ public interface PedidoRepository {
 
     Pedido.Status getStatus(long id);
 
-    Boolean cancelarPedido(long id); // LEMBRAR DE DELETAR ITENS PEDIDO e ITENSPEDIDO_PEDIDO DO DB
+    boolean cancelarPedido(long id); // LEMBRAR DE DELETAR ITENS PEDIDO e ITENSPEDIDO_PEDIDO DO DB
 
     List<Pedido> ultimos20Dias(String cpf);
 
-    Boolean pagarPedido(long id);
+    boolean pagarPedido(long id);
 
-    Boolean atualizarStatus(long id, Pedido.Status status);
+    boolean atualizarStatus(long id, Pedido.Status status);
 
     List<Pedido> porPeriodo(String cpf, LocalDateTime ini, LocalDateTime fim);
 

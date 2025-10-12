@@ -114,7 +114,7 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
     }
 
     @Override
-    public Boolean cancelarPedido(long id) {
+    public boolean cancelarPedido(long id) {
         String sql = "UPDATE pedidos SET estado = 'CANCELADO' WHERE id = ?";
         int access = this.jdbcTemplate.update(sql, id);
         if (access > 0) {
@@ -244,7 +244,7 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
     }
 
     @Override
-    public Boolean pagarPedido(long id) {
+    public boolean pagarPedido(long id) {
         String sql = "UPDATE pedidos SET estado = 'PAGO' WHERE id = ?";
         int access = this.jdbcTemplate.update(sql, id);
         if (access > 0) {
@@ -255,7 +255,7 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
     }
 
     @Override
-    public Boolean atualizarStatus(long id, Pedido.Status status) {
+    public boolean atualizarStatus(long id, Pedido.Status status) {
         String statusString = status.toString();
         String sql = "UPDATE pedidos SET estado = ? WHERE id = ?";
         int access = this.jdbcTemplate.update(sql, statusString, id);

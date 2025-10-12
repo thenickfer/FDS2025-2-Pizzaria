@@ -1,6 +1,7 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.SubmetePedidoUC;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Requests.SubmetePedidoRequest;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.StatusPedidoResponse;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.SubmetePedidoResponse;
+import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.CancelaPedidoUC;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.RecuperaStatusPedidoUC;
 
 @RestController
@@ -22,11 +24,14 @@ import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.RecuperaStatusPedidoUC;
 public class PedidoController {
     private SubmetePedidoUC submetePedidoUC;
     private RecuperaStatusPedidoUC recuperaStatusPedidoUC;
+    private CancelaPedidoUC cancelaPedidoUC;
 
-    public PedidoController(SubmetePedidoUC submetePedidoUC, RecuperaStatusPedidoUC recuperaStatusPedidoUC) {
+    public PedidoController(SubmetePedidoUC submetePedidoUC, RecuperaStatusPedidoUC recuperaStatusPedidoUC,
+            CancelaPedidoUC cancelaPedidoUC) {
         this.submetePedidoUC = submetePedidoUC;
         this.recuperaStatusPedidoUC = recuperaStatusPedidoUC;
-    }
+        this.cancelaPedidoUC = cancelaPedidoUC;
+    }// Usar response entities, tratamento de excecao ta uma bosta
 
     @GetMapping("/status/{id}")
     @CrossOrigin("*")
@@ -58,6 +63,16 @@ public class PedidoController {
                 pedidoResponse.getDesconto(),
                 pedidoResponse.getValorCobrado());
         return pedidoPresenter;
+    }
+
+    @DeleteMapping("/cancelar/{id}")
+    @CrossOrigin("*")
+    public boolean cancelarPedido(@PathVariable(value = "id") long id) {
+        boolean ok = cancelaPedidoUC.run(id);
+        if (ok)
+            return true;
+        else
+            return false;
     }
 
 }
