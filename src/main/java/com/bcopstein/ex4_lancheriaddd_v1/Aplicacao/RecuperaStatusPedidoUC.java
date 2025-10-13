@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.StatusPedidoResponse;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Exceptions.PedidoNotFoundException;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.PedidoService;
 
 @Component
@@ -18,7 +19,7 @@ public class RecuperaStatusPedidoUC {
 
     public StatusPedidoResponse run(long idPedido) {
         if (!pedidoService.exists(idPedido)) {
-            throw new RuntimeException("Pedido nao existe: " + idPedido);
+            throw new PedidoNotFoundException(idPedido);
         }
         Pedido.Status pedidoStatus = pedidoService.getStatus(idPedido);
         return new StatusPedidoResponse(pedidoStatus);

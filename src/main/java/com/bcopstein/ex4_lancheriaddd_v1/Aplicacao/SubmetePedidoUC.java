@@ -8,10 +8,11 @@ import org.springframework.stereotype.Component;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Requests.SubmetePedidoRequest;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.SubmetePedidoResponse;
-import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.ProdutosRepository;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.ItemPedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Produto;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Exceptions.ClienteNotFoundException;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Exceptions.ProdutoNotFoundException;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.ClienteService;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.DescontoService;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.EstoqueService;
@@ -42,7 +43,7 @@ public class SubmetePedidoUC {
     public SubmetePedidoResponse run(SubmetePedidoRequest request) {
 
         if (clienteService.getByCpf(request.getCliente().getCpf()) == null) {
-            throw new IllegalArgumentException("Cliente inexistente");
+            throw new ClienteNotFoundException(request.getCliente().getCpf());
         }
 
         Map<Long, Produto> map = produtosService.getMapping();
@@ -51,8 +52,7 @@ public class SubmetePedidoUC {
                 .map(itemRequest -> {
                     Produto produto = map.get(itemRequest.getProdutoId());
                     if (produto == null) {
-                        throw new IllegalArgumentException(
-                                "Produto nao encontrado com ID: " + itemRequest.getProdutoId());
+                        throw new ProdutoNotFoundException(itemRequest.getProdutoId());
                     }
                     return new ItemPedido(0, produto, itemRequest.getQuantidade());
                 })
