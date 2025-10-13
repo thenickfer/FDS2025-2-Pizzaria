@@ -2,6 +2,7 @@ package com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos;
 
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -18,19 +19,16 @@ public class CozinhaService {
     private Pedido emPreparacao;
     private Queue<Pedido> filaSaida;
     private PedidoRepository pedidoRepository;
-    private EntregaService entregaService;
 
     private ScheduledExecutorService scheduler;
 
     @Autowired
-    public CozinhaService(PedidoRepository pedidoRepository, EntregaService entregaService) {
+    public CozinhaService(PedidoRepository pedidoRepository, BlockingQueue<Pedido> filaSaida) {
         filaEntrada = new LinkedBlockingQueue<Pedido>();
         emPreparacao = null;
-        filaSaida = new LinkedBlockingQueue<Pedido>();
+        this.filaSaida = filaSaida;
         scheduler = Executors.newSingleThreadScheduledExecutor();
         this.pedidoRepository = pedidoRepository;
-        this.entregaService = entregaService;
-        mandaPedido();
     }
 
     private synchronized void colocaEmPreparacao(Pedido pedido) {
@@ -62,11 +60,5 @@ public class CozinhaService {
             Pedido prox = filaEntrada.poll();
             scheduler.schedule(() -> colocaEmPreparacao(prox), 1, TimeUnit.SECONDS);
         }
-    }
-
-    public void mandaPedido() {
-        if (!filaSaida.isEmpty())
-            entregaService.receberPedidoParaEntrega(filaSaida.poll());
-        scheduler.schedule(() -> mandaPedido(), 2, TimeUnit.SECONDS);
     }
 }

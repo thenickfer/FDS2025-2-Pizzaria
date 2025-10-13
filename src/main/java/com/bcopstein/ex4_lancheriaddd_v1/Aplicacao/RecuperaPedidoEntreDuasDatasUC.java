@@ -22,14 +22,15 @@ public class RecuperaPedidoEntreDuasDatasUC {
         this.pedidoService = pedidoService;
     }
 
-    public PedidosEntreDuasDatasResponse run (String cpf, LocalDateTime ini, LocalDateTime fim){{
-        if (clienteService.getByCpf(cpf) == null) {
-            throw new ClienteNotFoundException(cpf);
+    public PedidosEntreDuasDatasResponse run(String cpf, LocalDateTime ini, LocalDateTime fim) {
+        {
+            if (clienteService.getByCpf(cpf) == null) {
+                throw new ClienteNotFoundException(cpf);
+            }
+            List<Pedido> listaPedidos = pedidoService.porPeriodo(cpf, ini, fim);
+            return new PedidosEntreDuasDatasResponse(listaPedidos);
         }
-        List<Pedido> listaPedidos = pedidoService.porPeriodo(cpf, ini, fim);
-        return new PedidosEntreDuasDatasResponse (listaPedidos);
-    }
-        
+
     }
 
 }

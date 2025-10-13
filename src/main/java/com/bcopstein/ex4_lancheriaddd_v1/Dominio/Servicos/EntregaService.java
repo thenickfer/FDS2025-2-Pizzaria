@@ -4,6 +4,7 @@ import java.util.Queue;
 
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
@@ -18,9 +19,9 @@ public class EntregaService {
     private Queue<Pedido> listaPedidosProntos;
     private ScheduledExecutorService scheduler;
 
-    public EntregaService(PedidoRepository pedidoRepository) {
+    public EntregaService(PedidoRepository pedidoRepository, BlockingQueue<Pedido> listaPedidosProntos) {
         this.pedidoRepository = pedidoRepository;
-        this.listaPedidosProntos = new LinkedBlockingQueue<Pedido>();
+        this.listaPedidosProntos = listaPedidosProntos;
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
 
         // simula um entregador ficando disponivel a cada 5 sec
