@@ -21,6 +21,10 @@ public class RecuperarCardapioUC {
 
     public CardapioResponse run(long idCardapio){
         Cardapio cardapio = cardapioService.recuperaCardapio(idCardapio);
+        if (cardapio == null){
+            throw new IllegalArgumentException("Cardapio inexistente");
+        }
+        
         List<Produto> sugestoes = cardapioService.recuperaSugestoesDoChef();
         return new CardapioResponse(cardapio,sugestoes);
     }
