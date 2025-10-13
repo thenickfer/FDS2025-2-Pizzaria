@@ -1,5 +1,9 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao.Presenters.PedidoPresenter;
@@ -16,11 +21,13 @@ import com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao.Presenters.Ped
 import com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao.Presenters.StatusPresenter;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.SubmetePedidoUC;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Requests.SubmetePedidoRequest;
+import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.PedidosEntreDuasDatasResponse;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.StatusPedidoResponse;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.SubmetePedidoResponse;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.CancelaPedidoUC;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.PagaPedidoUC;
+import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.RecuperaPedidoEntreDuasDatasUC;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.RecuperaStatusPedidoUC;
 
 @RestController
@@ -30,13 +37,16 @@ public class PedidoController {
     private RecuperaStatusPedidoUC recuperaStatusPedidoUC;
     private CancelaPedidoUC cancelaPedidoUC;
     private PagaPedidoUC pagaPedidoUC;
+    private RecuperaPedidoEntreDuasDatasUC pedidosEntre2Datas;
 
     public PedidoController(SubmetePedidoUC submetePedidoUC, RecuperaStatusPedidoUC recuperaStatusPedidoUC,
-            CancelaPedidoUC cancelaPedidoUC, PagaPedidoUC pagaPedidoUC) {
+            CancelaPedidoUC cancelaPedidoUC, PagaPedidoUC pagaPedidoUC, RecuperaPedidoEntreDuasDatasUC pedidosEntre2Datas) {
         this.submetePedidoUC = submetePedidoUC;
         this.recuperaStatusPedidoUC = recuperaStatusPedidoUC;
         this.cancelaPedidoUC = cancelaPedidoUC;
         this.pagaPedidoUC = pagaPedidoUC;
+        this.pedidosEntre2Datas = pedidosEntre2Datas;
+
     }// Usar response entities, tratamento de excecao ta uma bosta
      // provavelmente o melhor seria response entities + uma classe pra tratamento de
      // excecoes
@@ -94,7 +104,35 @@ public class PedidoController {
                     ped.getValorCobrado()));
         }
         return ResponseEntity.badRequest().build();
-
     }
 
+    @GetMapping("/pedidosentreduasdatas") //...github.dev/pedido/pedidosentreduasdatas?cpf=cpf?dataInicio=data?dataFim=data
+    @CrossOrigin("*")
+        public ResponseEntity<List<PedidoPresenter>> pedidosEntreDuasDatas(@RequestParam (value = "cpf")String cpf,
+                                                @RequestParam (value = "dataInicio") LocalDateTime dataInicio,
+                                                @RequestParam (value = "dataFim") LocalDateTime dataFim){                                    
+        
+        if (dataInicio.isAfter(dataFim)){return ResponseEntity.badRequest().build();}
+        
+        PedidosEntreDuasDatasResponse response = pedidosEntre2Datas.run(cpf, dataInicio, dataFim);
+        List<Pedido> lista = response.getPedidos();
+        List<PedidoPresenter> pedidoPresenters = new ArrayList<>();
+        PedidoPresenter pedidoPresenter;
+
+        for(Pedido p:lista){
+            pedidoPresenter = new PedidoPresenter(
+                p.getId(),
+                p.getCliente(),
+                p.getDataHoraPagamento(),
+                p.getItens(),
+                p.getStatus(),
+                p.getValor(),
+                p.getImpostos(),
+                p.getDesconto(),
+                p.getValorCobrado());
+            pedidoPresenters.add(pedidoPresenter);
+        }
+        
+        return ResponseEntity.ok(pedidoPresenters);
+    }
 }
