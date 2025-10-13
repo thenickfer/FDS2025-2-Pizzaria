@@ -1,12 +1,12 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Aplicacao;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.stereotype.Component;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Exceptions.PagamentoErroException;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Exceptions.PedidoNotFoundException;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Exceptions.PedidoPagamentoInvalidoException;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.CozinhaService;
-import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.EntregaService;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.PagamentoService;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.PedidoService;
 
@@ -24,15 +24,15 @@ public class PagaPedidoUC {
 
     public Pedido run(long idPedido) {
         if (!pedidoService.exists(idPedido))
-            throw new RuntimeException("Pedido nao existe: " + idPedido);
+            throw new PedidoNotFoundException(idPedido);
 
         Pedido ped = pedidoService.getPedido(idPedido);
         if (ped.getStatus() != Pedido.Status.APROVADO)
-            throw new RuntimeException("Pedido nao pode ser pago no status: " + ped.getStatus().name());
+            throw new PedidoPagamentoInvalidoException(idPedido, ped.getStatus());
 
         ped = pagamentoService.processarPagamento(ped);
         if (ped.getStatus() != Pedido.Status.PAGO) {
-            throw new RuntimeException("Erro no pagamento do pedido: " + idPedido);
+            throw new PagamentoErroException(idPedido);
         }
         cozinhaService.chegadaDePedido(ped);
         return ped;

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.PedidosEntreDuasDatasResponse;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Exceptions.ClienteNotFoundException;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.ClienteService;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.PedidoService;
 
@@ -23,12 +24,10 @@ public class RecuperaPedidoEntreDuasDatasUC {
 
     public PedidosEntreDuasDatasResponse run (String cpf, LocalDateTime ini, LocalDateTime fim){{
         if (clienteService.getByCpf(cpf) == null) {
-            throw new IllegalArgumentException("Cliente inexistente");
+            throw new ClienteNotFoundException(cpf);
         }
-        
         List<Pedido> listaPedidos = pedidoService.porPeriodo(cpf, ini, fim);
         return new PedidosEntreDuasDatasResponse (listaPedidos);
-
     }
         
     }
