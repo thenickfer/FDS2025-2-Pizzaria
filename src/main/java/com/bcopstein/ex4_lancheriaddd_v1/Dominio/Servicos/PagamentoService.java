@@ -1,9 +1,11 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos;
+
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.PedidoRepository;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
-
 
 @Service
 public class PagamentoService {
@@ -23,8 +25,13 @@ public class PagamentoService {
         }
 
         pedido.setStatus(Pedido.Status.PAGO);
+        LocalDateTime dataPagamento = LocalDateTime.now();
+        pedido.setDataHoraPagamento(dataPagamento);
+        boolean ok = pedidoRepository.pagarPedido(pedido.getId(), dataPagamento);
+        if (ok)
+            return pedido;
+        else
+            throw new RuntimeException("Nao foi possivel registrar o pagamento");
 
-        return pedido;
     }
 }
-

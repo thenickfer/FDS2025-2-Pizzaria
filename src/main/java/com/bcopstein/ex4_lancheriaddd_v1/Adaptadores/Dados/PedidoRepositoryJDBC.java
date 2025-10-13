@@ -244,9 +244,10 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
     }
 
     @Override
-    public boolean pagarPedido(long id) {
-        String sql = "UPDATE pedidos SET estado = 'PAGO' WHERE id = ?";
-        int access = this.jdbcTemplate.update(sql, id);
+    public boolean pagarPedido(long id, LocalDateTime data) {
+        String sql = "UPDATE pedidos SET estado = 'PAGO', data_hora_pagamento = ? WHERE id = ?";
+        Timestamp ts = (data != null) ? Timestamp.valueOf(data) : null;
+        int access = this.jdbcTemplate.update(sql, ts, id);
         if (access > 0) {
             return true;
         } else {

@@ -30,6 +30,7 @@ public class EntregaService {
 
     public synchronized void receberPedidoParaEntrega(Pedido p) {
         System.out.println("Recebemos o pedido " + p.getId() + "para entrega, aguardando entregador");
+        pedidoRepository.atualizarStatus(p.getId(), Pedido.Status.TRANSPORTE);
         listaPedidosProntos.add(p);
     }
 

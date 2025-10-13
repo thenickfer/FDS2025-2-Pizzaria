@@ -99,4 +99,8 @@ public class Pedido {
     public void setId(long id) {
         this.id = id;
     }
+
+    public void setDataHoraPagamento(LocalDateTime data) {
+        this.dataHoraPagamento = data;
+    }
 }

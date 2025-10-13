@@ -51,6 +51,14 @@ public class PedidoService {
         return pedidoRepository.getPedidoPorId(id) != null;
     }
 
+    public Pedido getPedido(long id) {
+        Pedido ped = pedidoRepository.getPedidoPorId(id);
+        if (ped == null) {
+            throw new RuntimeException("Pedido nao existe: " + id);
+        }
+        return ped;
+    }
+
     // public Pedido mandaPedido(Pedido ped){
     // if (ped == null){
     // throw new IllegalArgumentException("pedido must exist");
