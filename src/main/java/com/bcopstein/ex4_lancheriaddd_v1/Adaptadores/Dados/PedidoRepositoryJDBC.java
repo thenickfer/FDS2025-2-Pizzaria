@@ -128,7 +128,7 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
     public List<Pedido> ultimos20Dias(String cpf) {
         String sql = "SELECT p.id as pedidoId, p.estado, p.data_hora_pagamento, p.valor, " +
                 "p.imposto, p.desconto, p.valor_cobrado, c.cpf, c.nome, c.celular, " +
-                "c.endereco, c.email, iped.id_itemPedido as itemPedidoID, iped.quantidade as itemPedidoQuant, " +
+                "c.endereco, c.email, iPed.id_itemPedido as itemPedidoID, iped.quantidade as itemPedidoQuant, " +
                 "prod.id as produtoID, prod.descricao as produtoDesc, prod.preco as produtoPreco, " +
                 "rc.id as receitaID, rc.titulo as receitaTitulo, " +
                 "ing.id as ingreID, ing.descricao as ingreDesc " +
@@ -136,8 +136,8 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
                 "JOIN pedido_cliente pc on c.cpf = pc.cliente_cpf " +
                 "JOIN pedidos p on pc.pedido_id = p.id " +
                 "LEFT JOIN pedido_itemPedido pedItem on p.id = pedItem.id_pedido " +
-                "LEFT JOIN itemPedido iPed on pedItem.id_itemPedido = iped.id_itemPedido " +
-                "LEFT JOIN itemPedido_produto iPedProd on iped.id_itemPedido = iPedProd.id_itemPedido " +
+                "LEFT JOIN itemPedido iPed on pedItem.id_itemPedido = iPed.id_itemPedido " +
+                "LEFT JOIN itemPedido_produto iPedProd on iPed.id_itemPedido = iPedProd.id_itemPedido " +
                 "LEFT JOIN produtos prod on iPedProd.id_produto = prod.id " +
                 "LEFT JOIN produto_receita prodReceita on prod.id = prodReceita.produto_id " +
                 "LEFT JOIN receitas rc on prodReceita.receita_id = rc.id " +
@@ -271,16 +271,16 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
     public List<Pedido> porPeriodo(String cpf, LocalDateTime ini, LocalDateTime fim) {
         String sql = "SELECT p.id as pedidoId, p.estado, p.data_hora_pagamento, p.valor, " +
                 "p.imposto, p.desconto, p.valor_cobrado, c.cpf, c.nome, c.celular, " +
-                "c.endereco, c.email, iped.id_itemPedido as itemPedidoID, iped.quantidade as itemPedidoQuant, " +
+                "c.endereco, c.email, iPed.id_itemPedido as itemPedidoID, iped.quantidade as itemPedidoQuant, " +
                 "prod.id as produtoID, prod.descricao as produtoDesc, prod.preco as produtoPreco, " +
                 "rc.id as receitaID, rc.titulo as receitaTitulo, " +
                 "ing.id as ingreID, ing.descricao as ingreDesc " +
                 "FROM clientes c " +
-                "JOIN pedido_cliente pc on c.cliente_cpf = pc.cliente_cpf " +
+                "JOIN pedido_cliente pc on c.cpf = pc.cliente_cpf " +
                 "JOIN pedidos p on pc.pedido_id = p.id " +
                 "LEFT JOIN pedido_itemPedido pedItem on p.id = pedItem.id_pedido " +
-                "LEFT JOIN itemPedido iPed on pedItem.id_itemPedido = iped.id_itemPedido " +
-                "LEFT JOIN itemPedido_produto iPedProd on iped.id_itemPedido = iPedProd.id_itemPedido " +
+                "LEFT JOIN itemPedido iPed on pedItem.id_itemPedido = iPed.id_itemPedido " +
+                "LEFT JOIN itemPedido_produto iPedProd on iPed.id_itemPedido = iPedProd.id_itemPedido " +
                 "LEFT JOIN produtos prod on iPedProd.id_produto = prod.id " +
                 "LEFT JOIN produto_receita prodReceita on prod.id = prodReceita.produto_id " +
                 "LEFT JOIN receitas rc on prodReceita.receita_id = rc.id " +

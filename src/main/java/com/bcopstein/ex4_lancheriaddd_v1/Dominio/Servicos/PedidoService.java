@@ -1,5 +1,8 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +60,10 @@ public class PedidoService {
             throw new RuntimeException("Pedido nao existe: " + id);
         }
         return ped;
+    }
+
+    public List<Pedido> porPeriodo (String cpf, LocalDateTime ini, LocalDateTime fim){
+        return pedidoRepository.porPeriodo(cpf, ini, fim);
     }
 
     // public Pedido mandaPedido(Pedido ped){
