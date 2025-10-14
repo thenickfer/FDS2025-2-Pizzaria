@@ -36,7 +36,7 @@ public class CozinhaService {
         emPreparacao = pedido;
         pedidoRepository.atualizarStatus(pedido.getId(), Pedido.Status.PREPARACAO);
         System.out.println("Pedido em preparacao: " + pedido);
-        // Agenda pedidoPronto para ser chamado em 5 segundos
+        
         scheduler.schedule(() -> pedidoPronto(), 5, TimeUnit.SECONDS);
     }
 
@@ -49,13 +49,13 @@ public class CozinhaService {
         }
     }
 
-    public synchronized void pedidoPronto() { // chamar metodo para mexer no repositorio
+    public synchronized void pedidoPronto() { 
         emPreparacao.setStatus(Pedido.Status.PRONTO);
         pedidoRepository.atualizarStatus(emPreparacao.getId(), Pedido.Status.PRONTO);
         filaSaida.add(emPreparacao);
         System.out.println("Pedido na fila de saida: " + emPreparacao);
         emPreparacao = null;
-        // Se tem pedidos na fila, programa a preparação para daqui a 1 segundo
+        
         if (!filaEntrada.isEmpty()) {
             Pedido prox = filaEntrada.poll();
             scheduler.schedule(() -> colocaEmPreparacao(prox), 1, TimeUnit.SECONDS);

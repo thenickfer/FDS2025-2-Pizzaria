@@ -26,7 +26,6 @@ public class EntregaService {
         this.listaPedidosProntos = listaPedidosProntos;
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
 
-        // simula um entregador ficando disponivel a cada 5 sec
         this.scheduler.scheduleAtFixedRate(this::iniciandoTransporte, 5, 5,
         TimeUnit.SECONDS);
     }
@@ -40,13 +39,16 @@ public class EntregaService {
     private synchronized void iniciandoTransporte() {
         Pedido p = listaPedidosProntos.poll();
 
-        if (p != null) {
-            System.out.println("Entregador pegou o pedido " + p.getId() + "e esta em transporte");
-            p.setStatus(Status.TRANSPORTE);
-            pedidoRepository.atualizarStatus(p.getId(), Status.TRANSPORTE);
-
-            scheduler.schedule(() -> finalizarEntrega(p), 5, TimeUnit.SECONDS);
+        if(p == null){
+           return; // NAO FAZER EXCECAO,O SCHEDULER BUGA
         }
+
+        System.out.println("Entregador pegou o pedido " + p.getId() + "e esta em transporte");
+        p.setStatus(Status.TRANSPORTE);
+        pedidoRepository.atualizarStatus(p.getId(), Status.TRANSPORTE);
+        
+        scheduler.schedule(() -> finalizarEntrega(p), 5, TimeUnit.SECONDS);
+        
     }
 
     private synchronized void finalizarEntrega(Pedido p) {

@@ -22,15 +22,15 @@ public class DescontoService {
     }
 
     public double calcularDesconto(Pedido p) {
-        // Se nao tem cliente, retorna 0
+        
         if (p == null) {
             return 0;
         }
 
-        // Pega a lisa de Pedidos do Cliente nso ultimso 20 dias
+        
         List<Pedido> nroPedidos = pedidoRepository.ultimos20Dias(p.getCliente().getCpf()); 
 
-        // verifica tamanho da lista
+        
         if (nroPedidos.size() > QNTD_PARA_DESCONTO) {
             double desc = p.getValor() * TAXA;
             p.setDesconto(desc);
