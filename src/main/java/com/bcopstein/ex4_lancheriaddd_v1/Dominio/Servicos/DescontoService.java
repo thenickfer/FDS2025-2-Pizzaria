@@ -28,9 +28,7 @@ public class DescontoService {
         }
 
         // Pega a lisa de Pedidos do Cliente nso ultimso 20 dias
-        List<Pedido> nroPedidos = pedidoRepository.ultimos20Dias(p.getCliente().getCpf()); // nao sei se vai ser getId
-                                                                                           // ou getCPF, ver
-        // depois isso
+        List<Pedido> nroPedidos = pedidoRepository.ultimos20Dias(p.getCliente().getCpf()); 
 
         // verifica tamanho da lista
         if (nroPedidos.size() > QNTD_PARA_DESCONTO) {

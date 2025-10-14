@@ -32,7 +32,6 @@ public class PedidoRequest {
     private LocalDateTime dataHoraPagamento;
     private List<ItemRequest> itens;
 
-    // Getters and Setters
     public Cliente getCliente() {
         return cliente;
     }

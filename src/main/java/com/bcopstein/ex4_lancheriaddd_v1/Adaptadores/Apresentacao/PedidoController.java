@@ -47,9 +47,7 @@ public class PedidoController {
         this.pagaPedidoUC = pagaPedidoUC;
         this.pedidosEntre2Datas = pedidosEntre2Datas;
 
-    }// Usar response entities, tratamento de excecao ta uma bosta
-     // provavelmente o melhor seria response entities + uma classe pra tratamento de
-     // excecoes
+    }
 
     @GetMapping("/status/{id}")
     @CrossOrigin("*")
@@ -96,8 +94,7 @@ public class PedidoController {
     @PatchMapping("/pagamento/{id}")
     @CrossOrigin("*")
     public ResponseEntity<PedidoPresenter> pagarPedido(@PathVariable(value = "id") long id) {
-        Pedido ped = pagaPedidoUC.run(id);// agora que me dei conta que esqueci de fazer um objeto no nivel de aplicacao
-                                          // pro pedido, mas sao 2:30 da manha, facam vcs isso
+        Pedido ped = pagaPedidoUC.run(id);
         if (ped != null) {
             return ResponseEntity.ok(new PedidoPresenter(id, ped.getCliente(), ped.getDataHoraPagamento(),
                     ped.getItens(), ped.getStatus(), ped.getValor(), ped.getImpostos(), ped.getDesconto(),
@@ -106,7 +103,7 @@ public class PedidoController {
         return ResponseEntity.badRequest().build();
     }
 
-    @GetMapping("/pedidosentreduasdatas") //...github.dev/pedido/pedidosentreduasdatas?cpf=cpf?dataInicio=data?dataFim=data
+    @GetMapping("/pedidosentreduasdatas")
     @CrossOrigin("*")
         public ResponseEntity<List<PedidoPresenter>> pedidosEntreDuasDatas(@RequestParam (value = "cpf")String cpf,
                                                 @RequestParam (value = "dataInicio") LocalDateTime dataInicio,

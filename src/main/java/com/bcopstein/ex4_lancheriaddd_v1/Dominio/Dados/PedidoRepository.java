@@ -10,7 +10,7 @@ public interface PedidoRepository {
 
     Pedido.Status getStatus(long id);
 
-    boolean cancelarPedido(long id); // LEMBRAR DE DELETAR ITENS PEDIDO e ITENSPEDIDO_PEDIDO DO DB
+    boolean cancelarPedido(long id);
 
     List<Pedido> ultimos20Dias(String cpf);
 

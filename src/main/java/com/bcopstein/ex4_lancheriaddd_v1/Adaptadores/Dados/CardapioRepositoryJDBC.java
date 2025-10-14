@@ -42,7 +42,6 @@ public class CardapioRepositoryJDBC implements CardapioRepository{
     }
 
     @Override
-    // Por enquanto retorna sempre a pizza de queijo e presunto como indicação do "chef"
     public List<Produto> indicacoesDoChef() {
         return List.of(produtosRepository.recuperaProdutoPorid(2L));   
     }
