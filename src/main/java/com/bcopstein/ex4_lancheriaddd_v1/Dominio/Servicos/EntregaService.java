@@ -2,6 +2,7 @@ package com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos;
 
 import java.util.Queue;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.BlockingQueue;
@@ -16,17 +17,18 @@ import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido.Status;
 @Service
 public class EntregaService {
     private PedidoRepository pedidoRepository;
-    private Queue<Pedido> listaPedidosProntos;
+    private BlockingQueue<Pedido> listaPedidosProntos;
     private ScheduledExecutorService scheduler;
 
+    @Autowired
     public EntregaService(PedidoRepository pedidoRepository, BlockingQueue<Pedido> listaPedidosProntos) {
         this.pedidoRepository = pedidoRepository;
         this.listaPedidosProntos = listaPedidosProntos;
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
 
         // simula um entregador ficando disponivel a cada 5 sec
-        // this.scheduler.scheduleAtFixedRate(this::despacharPedido, 5, 5,
-        // TimeUnit.SECONDS);
+        this.scheduler.scheduleAtFixedRate(this::iniciandoTransporte, 5, 5,
+        TimeUnit.SECONDS);
     }
 
     public synchronized void receberPedidoParaEntrega(Pedido p) {
