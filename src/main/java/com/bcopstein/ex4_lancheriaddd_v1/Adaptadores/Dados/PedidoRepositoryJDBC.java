@@ -61,8 +61,7 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
                 genId,
                 ped.getCliente().getCpf());
 
-        // usar batch update ao inves de string, string tem risco de sql injection
-        // POR ALGUM MOTIVO, ITEMPEDIDO NAO TEM ID????
+        
 
         List<Object[]> batchArgs = new ArrayList<>();
         List<ItemPedido> newItens = new ArrayList<>();
@@ -80,7 +79,7 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
             long itemPedidoId = itemKeyHolder.getKey().longValue();
             ItemPedido created = new ItemPedido(itemPedidoId, item.getItem(), item.getQuantidade());
             newItens.add(created);
-            batchArgs.add(new Object[] { genId, itemPedidoId }); // ARRUMAR
+            batchArgs.add(new Object[] { genId, itemPedidoId }); 
         }
 
         this.jdbcTemplate.batchUpdate("INSERT INTO pedido_itemPedido (id_pedido, id_itemPedido) VALUES (?, ?)",
@@ -96,7 +95,7 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
                 ped.getImpostos(),
                 ped.getDesconto(),
                 ped.getValorCobrado());
-    }// Add pedido_Cliente e pedido_Itempedido
+    }
 
     @Override
     public Pedido.Status getStatus(long id) {
@@ -409,6 +408,7 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
                     List<ItemPedido> itens = new ArrayList<>();
                     while (rs.next()) {
                         if (resultPedido == null) {
+                            // variaveis pedido
                             long pedidoId = rs.getLong("pedidoId");
                             String pedidoEstado = rs.getString("estado");
                             Timestamp pedidoDataHoraPagemento = rs.getTimestamp("data_hora_pagamento");
@@ -417,6 +417,7 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
                             double pedidoDesconto = rs.getDouble("desconto");
                             double pedidoValorCobrado = rs.getDouble("valor_cobrado");
 
+                            // cliente 
                             Cliente cliente = new Cliente(
                                     rs.getString("cpf"),
                                     rs.getString("nome"),
@@ -424,6 +425,7 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
                                     rs.getString("endereco"),
                                     rs.getString("email"));
 
+                            // pedido
                             resultPedido = new Pedido(
                                     pedidoId,
                                     cliente,
@@ -435,6 +437,8 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
                                     pedidoDesconto,
                                     pedidoValorCobrado);
                         }
+                        
+                        // itens pedido
                         Long idItemPedido = (Long) rs.getObject("itemPedidoID");
                         Long quantidade = (Long) rs.getObject("itemPedidoQuant");
                         if (idItemPedido != null) {

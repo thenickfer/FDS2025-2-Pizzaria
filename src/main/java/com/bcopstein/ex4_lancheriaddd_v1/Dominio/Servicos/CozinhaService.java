@@ -36,7 +36,7 @@ public class CozinhaService {
         emPreparacao = pedido;
         pedidoRepository.atualizarStatus(pedido.getId(), Pedido.Status.PREPARACAO);
         System.out.println("Pedido em preparacao: " + pedido);
-        // Agenda pedidoPronto para ser chamado em 2 segundos
+        // Agenda pedidoPronto para ser chamado em 5 segundos
         scheduler.schedule(() -> pedidoPronto(), 5, TimeUnit.SECONDS);
     }
 

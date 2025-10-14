@@ -66,14 +66,4 @@ public class PedidoService {
         return pedidoRepository.porPeriodo(cpf, ini, fim);
     }
 
-    // public Pedido mandaPedido(Pedido ped){
-    // if (ped == null){
-    // throw new IllegalArgumentException("pedido must exist");
-    // }
-
-    // ped = pagamentoService.processarPagamento(ped);
-    // cozinhaService.chegadaDePedido(ped);
-    // return ped;
-    // }
-
 }

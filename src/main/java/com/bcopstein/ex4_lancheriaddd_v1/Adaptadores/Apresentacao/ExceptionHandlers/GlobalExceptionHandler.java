@@ -21,9 +21,7 @@ import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Exceptions.ProdutoNotFoundExcep
 public class GlobalExceptionHandler {
     @ExceptionHandler({ PedidoNotFoundException.class, ClienteNotFoundException.class,
             CardapioNotFoundException.class, ProdutoNotFoundException.class })
-    public ResponseEntity<Map<String, String>> handleNotFound(RuntimeException e) { // li que eh melhor retornar map pra
-                                                                                    // ser mais facil de converter o
-                                                                                    // json do outro lado
+    public ResponseEntity<Map<String, String>> handleNotFound(RuntimeException e) { 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
     }
 
