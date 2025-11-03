@@ -3,10 +3,12 @@ package com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades;
 public class ItemEstoque {
     private Ingrediente ingrediente;
     private int quantidade;
+    private long id;
 
-    public ItemEstoque(Ingrediente ingrediente, int quantidade) {
+    public ItemEstoque(long id, Ingrediente ingrediente, int quantidade) {
         this.ingrediente = ingrediente;
         this.quantidade = quantidade;
+        this.id = id;
     }
 
     public Ingrediente getIngrediente() { return ingrediente; }
