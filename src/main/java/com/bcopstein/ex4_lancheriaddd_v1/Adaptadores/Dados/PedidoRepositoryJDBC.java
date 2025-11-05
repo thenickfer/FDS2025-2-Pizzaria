@@ -242,6 +242,10 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
         return pedidos;
     }
 
+    public List<Pedido> ultimos30Dias(String cpf){
+        return null;
+    }
+
     @Override
     public boolean pagarPedido(long id, LocalDateTime data) {
         String sql = "UPDATE pedidos SET estado = 'PAGO', data_hora_pagamento = ? WHERE id = ?";

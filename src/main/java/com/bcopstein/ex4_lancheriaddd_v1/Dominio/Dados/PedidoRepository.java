@@ -14,6 +14,8 @@ public interface PedidoRepository {
 
     List<Pedido> ultimos20Dias(String cpf);
 
+    List<Pedido> ultimos30Dias(String cpf);
+
     boolean pagarPedido(long id, LocalDateTime data);
 
     boolean atualizarStatus(long id, Pedido.Status status);
