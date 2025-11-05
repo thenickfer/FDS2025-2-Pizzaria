@@ -1,5 +1,6 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Aplicacao;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Requests.SubmetePedidoRequest;
 import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.SubmetePedidoResponse;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Cliente;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.ItemPedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Produto;
@@ -42,8 +44,10 @@ public class SubmetePedidoUC {
 
     public SubmetePedidoResponse run(SubmetePedidoRequest request) {
 
-        if (clienteService.getByCpf(request.getCliente().getCpf()) == null) {
-            throw new ClienteNotFoundException(request.getCliente().getCpf());
+        Cliente c = clienteService.getByCpf(request.getCliente());
+
+        if (c == null) {
+            throw new ClienteNotFoundException(request.getCliente());
         }
 
         Map<Long, Produto> map = produtosService.getMapping();
@@ -60,8 +64,8 @@ public class SubmetePedidoUC {
 
         Pedido pedido = new Pedido(
                 0,
-                request.getCliente(),
-                request.getDataHoraPagamento(),
+                c,
+                LocalDateTime.now(),
                 itens,
                 Pedido.Status.NOVO,
                 0,

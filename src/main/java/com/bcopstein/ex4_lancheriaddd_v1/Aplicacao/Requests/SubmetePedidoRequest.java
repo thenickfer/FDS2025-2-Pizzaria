@@ -36,31 +36,21 @@ public class SubmetePedidoRequest {
         }
     }
 
-    private Cliente cliente;
-    private LocalDateTime dataHoraPagamento;
+    private String cliente;
     private List<ItemRequest> itens;
 
-    public SubmetePedidoRequest(Cliente cliente, LocalDateTime dataHoraPagamento,
+    public SubmetePedidoRequest(String cliente,
             List<ItemRequest> itens) {
         this.cliente = cliente;
-        this.dataHoraPagamento = dataHoraPagamento;
         this.itens = itens;
     }
 
-    public Cliente getCliente() {
+    public String getCliente() {
         return cliente;
     }
 
-    public void setCliente(Cliente cliente) {
+    public void setCliente(String cliente) {
         this.cliente = cliente;
-    }
-
-    public LocalDateTime getDataHoraPagamento() {
-        return dataHoraPagamento;
-    }
-
-    public void setDataHoraPagamento(LocalDateTime dataHoraPagamento) {
-        this.dataHoraPagamento = dataHoraPagamento;
     }
 
     public List<ItemRequest> getItens() {
