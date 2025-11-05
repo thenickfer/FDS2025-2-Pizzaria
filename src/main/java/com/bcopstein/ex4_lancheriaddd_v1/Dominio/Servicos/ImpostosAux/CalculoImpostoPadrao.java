@@ -2,7 +2,7 @@ package com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.ImpostosAux;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
 
-public class CalculoImpostoPadrao {
+public class CalculoImpostoPadrao implements CalculoImposto {
 
     private static final double TAXA = 0.10;
 
