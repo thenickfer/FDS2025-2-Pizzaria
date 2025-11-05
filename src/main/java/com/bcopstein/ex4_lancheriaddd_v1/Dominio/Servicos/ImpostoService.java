@@ -1,22 +1,21 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.ImpostosAux.CalculoImposto;
 
 @Service
 public class ImpostoService {
+    private CalculoImposto ci;
 
-    private static final double TAXA = 0.10;
+    @Autowired
+    public ImpostoService(CalculoImposto ci) {
+        this.ci = ci;
+    }
 
     public double calcularImposto(Pedido pedido) {
-        double val = pedido.getValor() - pedido.getDesconto();
-
-        if (val <= 0) {
-            return 0;
-        } else {
-            pedido.setImpostos(val * TAXA);
-            return val * TAXA;
-        }
+        return this.ci.calcularImposto(pedido);
     }
 }
