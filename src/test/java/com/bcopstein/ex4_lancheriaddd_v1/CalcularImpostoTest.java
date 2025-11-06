@@ -1,19 +1,21 @@
 package com.bcopstein.ex4_lancheriaddd_v1;
 
-import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.PedidoRepository;
+import org.junit.jupiter.api.Test;
+
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
-import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.ImpostosAux.CalculoImposto;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.ImpostosAux.CalculoImpostoPadrao;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Test
-@ExtendWith(MockitoExtensions.class)
 public class CalcularImpostoTest {
-    @Mock
-    private PedidoRepository pedidoRepository;
-    @Mock
-    private CalculoImposto claculoImposto;
+    @Test
+    void calculaImposto() {
+        Pedido ped = new Pedido(999, null, null, null, null, 100.0, 0.0, 0, 0);
+        CalculoImpostoPadrao ci = new CalculoImpostoPadrao(); // instância real
 
-    void calculaImposto(){
-        Pedido ped = new Pedido(999, null, null, null, null, 0, 0, 0, 0);
-        when(pedidoRepository.getPedidoPorId(999))
+        double imposto = ci.calcularImposto(ped);
+
+        assertEquals(10.0, imposto, 1e-6);
+        // opcional: verificar efeito colateral
+        assertEquals(10.0, ped.getImpostos(), 1e-6);
     }
 }
