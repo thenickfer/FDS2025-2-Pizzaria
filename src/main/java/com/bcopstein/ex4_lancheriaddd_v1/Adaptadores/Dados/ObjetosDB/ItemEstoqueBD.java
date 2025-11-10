@@ -1,11 +1,15 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Dados.ObjetosDB;
 
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.ItemEstoque;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -14,12 +18,19 @@ public class ItemEstoqueBD {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY) //auto incrementa
     private Long id;
-    @OneToOne(cascade = CascadeType.REFRESH) //indica relacao com ingrediente   
-    private IngredienteBD ingrediente; //arrumar pra retornar objeto ingrediente
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH) //indica relacao com ingrediente   
+    @JoinColumn(name = "ingrediente_id", nullable = false)
+    private IngredienteBD ingrediente; //'e pra retornar objeto ingrediente
 
     private int quantidade;
 
     public ItemEstoqueBD(){}
+
+    public ItemEstoqueBD(IngredienteBD ing, int qtd){
+        this.ingrediente = ing;
+        this.quantidade = qtd;
+    }
 
     public ItemEstoqueBD(Long id, IngredienteBD ing, int qtd){
         this.id = id;
@@ -34,11 +45,11 @@ public class ItemEstoqueBD {
     public int getQuantidade (){return this.quantidade;}
 
     public static ItemEstoque fromItemEstoqueBD(ItemEstoqueBD ieb){
-        return new ItemEstoque(ieb.getId,IngredienteBD.fromIngredienteBD(ieb.getIngrediente()),ieb.getQuantidade);
+        return new ItemEstoque(ieb.getId(),IngredienteBD.fromIngredienteBD(ieb.getIngrediente()),ieb.getQuantidade());
     }
 
     public static ItemEstoqueBD toItemEstoqueBD (ItemEstoque i){
-        return new ItemEstoqueBD(i.getId,IngredienteBD.toIngredienteBD(i.getIngrediente),i.getQuantidade);
+        return new ItemEstoqueBD(i.getId(),IngredienteBD.toIngredienteBD(i.getIngrediente()),i.getQuantidade());
     }
 
 }

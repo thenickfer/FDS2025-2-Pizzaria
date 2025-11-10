@@ -11,7 +11,7 @@ public class ItemEstoque {
         this.id = id;
     }
 
-    public int getId(){return this.id;}
+    public long getId(){return this.id;}
     public Ingrediente getIngrediente() { return ingrediente; }
     public int getQuantidade() { return quantidade; }
     public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
