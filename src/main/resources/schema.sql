@@ -6,10 +6,10 @@ create table if not exists clientes(
   email varchar(255) not null
 );
 
-create table if not exists ingredientes (
-  id bigint primary key,
-  descricao varchar(255) not null
-);
+--create table if not exists ingredientes (
+--  id bigint primary key,
+--  descricao varchar(255) not null
+--);
 
 --create table if not exists itensEstoque(
   --  id bigint primary key,
