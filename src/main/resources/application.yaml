@@ -6,9 +6,16 @@ spring:
     password:
   sql:
     init:
-      mode: always   # executa schema.sql no boot
-    schema-locations: classpath:schema.sql
-    data-locations: classpath:data.sql
+      mode: always   # executa schema.sql no boot TAVA ALWAYS ANTES TO TESTANDO
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true #REATE TABLE das tabelas que NÃO estão mapeadas po
+    properties:
+      hibernate:
+        format_sql: true
   h2:
     console:
       enabled: true
