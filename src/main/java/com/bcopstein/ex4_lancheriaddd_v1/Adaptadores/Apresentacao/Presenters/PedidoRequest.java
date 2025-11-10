@@ -3,8 +3,6 @@ package com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Apresentacao.Presenters;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Cliente;
-
 public class PedidoRequest {
 
     public static class ItemRequest {
@@ -28,24 +26,15 @@ public class PedidoRequest {
         }
     }
 
-    private Cliente cliente;
-    private LocalDateTime dataHoraPagamento;
+    private String cpf;
     private List<ItemRequest> itens;
 
-    public Cliente getCliente() {
-        return cliente;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
-
-    public LocalDateTime getDataHoraPagamento() {
-        return dataHoraPagamento;
-    }
-
-    public void setDataHoraPagamento(LocalDateTime dataHoraPagamento) {
-        this.dataHoraPagamento = dataHoraPagamento;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public List<ItemRequest> getItens() {

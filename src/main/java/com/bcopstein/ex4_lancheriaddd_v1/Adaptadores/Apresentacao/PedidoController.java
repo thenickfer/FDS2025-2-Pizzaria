@@ -40,7 +40,8 @@ public class PedidoController {
     private RecuperaPedidoEntreDuasDatasUC pedidosEntre2Datas;
 
     public PedidoController(SubmetePedidoUC submetePedidoUC, RecuperaStatusPedidoUC recuperaStatusPedidoUC,
-            CancelaPedidoUC cancelaPedidoUC, PagaPedidoUC pagaPedidoUC, RecuperaPedidoEntreDuasDatasUC pedidosEntre2Datas) {
+            CancelaPedidoUC cancelaPedidoUC, PagaPedidoUC pagaPedidoUC,
+            RecuperaPedidoEntreDuasDatasUC pedidosEntre2Datas) {
         this.submetePedidoUC = submetePedidoUC;
         this.recuperaStatusPedidoUC = recuperaStatusPedidoUC;
         this.cancelaPedidoUC = cancelaPedidoUC;
@@ -61,8 +62,7 @@ public class PedidoController {
     public ResponseEntity<PedidoPresenter> submetePedido(@RequestBody PedidoRequest pedido) {
 
         SubmetePedidoRequest applicationRequest = new SubmetePedidoRequest(
-                pedido.getCliente(),
-                pedido.getDataHoraPagamento(),
+                pedido.getCpf(),
                 pedido.getItens().stream()
                         .map(item -> new SubmetePedidoRequest.ItemRequest(item.getProdutoId(), item.getQuantidade()))
                         .toList());
@@ -105,31 +105,33 @@ public class PedidoController {
 
     @GetMapping("/pedidosentreduasdatas")
     @CrossOrigin("*")
-        public ResponseEntity<List<PedidoPresenter>> pedidosEntreDuasDatas(@RequestParam (value = "cpf")String cpf,
-                                                @RequestParam (value = "dataInicio") LocalDateTime dataInicio,
-                                                @RequestParam (value = "dataFim") LocalDateTime dataFim){                                    
-        
-        if (dataInicio.isAfter(dataFim)){return ResponseEntity.badRequest().build();}
-        
+    public ResponseEntity<List<PedidoPresenter>> pedidosEntreDuasDatas(@RequestParam(value = "cpf") String cpf,
+            @RequestParam(value = "dataInicio") LocalDateTime dataInicio,
+            @RequestParam(value = "dataFim") LocalDateTime dataFim) {
+
+        if (dataInicio.isAfter(dataFim)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         PedidosEntreDuasDatasResponse response = pedidosEntre2Datas.run(cpf, dataInicio, dataFim);
         List<Pedido> lista = response.getPedidos();
         List<PedidoPresenter> pedidoPresenters = new ArrayList<>();
         PedidoPresenter pedidoPresenter;
 
-        for(Pedido p:lista){
+        for (Pedido p : lista) {
             pedidoPresenter = new PedidoPresenter(
-                p.getId(),
-                p.getCliente(),
-                p.getDataHoraPagamento(),
-                p.getItens(),
-                p.getStatus(),
-                p.getValor(),
-                p.getImpostos(),
-                p.getDesconto(),
-                p.getValorCobrado());
+                    p.getId(),
+                    p.getCliente(),
+                    p.getDataHoraPagamento(),
+                    p.getItens(),
+                    p.getStatus(),
+                    p.getValor(),
+                    p.getImpostos(),
+                    p.getDesconto(),
+                    p.getValorCobrado());
             pedidoPresenters.add(pedidoPresenter);
         }
-        
+
         return ResponseEntity.ok(pedidoPresenters);
     }
 }
