@@ -10,6 +10,10 @@ public class CalculoDesconto20Dias implements CalculoDesconto {
     private static final double TAXA = 0.07;
     private PedidoRepository pedidoRepository;
 
+    public CalculoDesconto20Dias(PedidoRepository pedidoRepository) {
+        this.pedidoRepository = pedidoRepository;
+    }
+
     public double calcularDesconto(Pedido p) {
         if (p == null) {
             return 0;
