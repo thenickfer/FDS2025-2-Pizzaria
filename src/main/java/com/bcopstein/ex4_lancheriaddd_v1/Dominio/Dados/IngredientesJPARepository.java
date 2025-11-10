@@ -8,5 +8,5 @@ import com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Dados.ObjetosDB.Ingrediente
 
 public interface IngredientesJPARepository extends JpaRepository<IngredienteBD, Long>{
     //ja vem com findById(id),count(),findAll(),getOne(id) e muito mais
-    List<IngredienteBD> findByReceitasId(Long receitaId);
+    // List<IngredienteBD> findByReceitasId(Long receitaId);
 }

@@ -1,5 +1,6 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Dados;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,14 @@ public class IngredientesRepositoryJPA implements IngredientesRepository{
         return repo.findAll().stream().map(ibd->IngredienteBD.fromIngredienteBD(ibd)).toList();
 	}
 
+	// @Override
+	// public List<Ingrediente> recuperaIngredientesReceita(long receitaId) {
+	// 	return repo.findByReceitasId(receitaId).stream().map(IngredienteBD::fromIngredienteBD).toList();
+	// }
+
 	@Override
-	public List<Ingrediente> recuperaIngredientesReceita(long receitaId) {
-		return repo.findByReceitasId(receitaId).stream().map(IngredienteBD::fromIngredienteBD).toList();
+	public List<Ingrediente> recuperaIngredientesReceita (long receitaId){
+		return new ArrayList<>();
 	}
 
     
