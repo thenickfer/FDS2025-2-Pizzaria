@@ -15,7 +15,7 @@ public class CalcularImpostoTest {
         double imposto = ci.calcularImposto(ped);
 
         assertEquals(10.0, imposto, 1e-6);
-        // opcional: verificar efeito colateral
+
         assertEquals(10.0, ped.getImpostos(), 1e-6);
     }
 }
