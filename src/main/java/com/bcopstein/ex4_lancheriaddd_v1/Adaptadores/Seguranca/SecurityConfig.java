@@ -23,7 +23,6 @@ public class SecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
-
   @Bean
   public UserDetailsService userDetailsService(DataSource dataSource) {
     return new JdbcUserDetailsManager(dataSource);
@@ -35,7 +34,7 @@ public class SecurityConfig {
       .csrf(csrf -> csrf.disable()) // API stateless
       .authorizeHttpRequests(auth -> auth
           .requestMatchers("/public/**").permitAll()
-          .requestMatchers("/api/admin/**").hasRole("ADMIN")
+          .requestMatchers("/api/master/**").hasRole("MASTER")
           .requestMatchers("/api/**").authenticated()
           .anyRequest().denyAll()
       )
