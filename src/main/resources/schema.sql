@@ -107,3 +107,28 @@ create table if not exists pedido_itemPedido(
   foreign key(id_pedido) references pedidos(id),
   foreign key(id_itemPedido) references itemPedido(id_itemPedido)
 );
+
+
+--Tabelas autenticacao
+create table if not exists users (
+  username varchar(50) not null primary key,
+  password varchar(100) not null,
+  enabled boolean not null
+);
+
+create table if not exists authorities (
+  username varchar(50) not null,
+  authority varchar(50) not null,
+  constraint fk_authorities_users foreign key(username) references users(username)
+);
+
+create unique index if not exists ix_auth_username on authorities (username, authority);
+
+--tabela relacao users e clientes
+create table if not exists users_cliente (
+  username varchar(50) not null,
+  email varchar(255) not null,
+  primary key (username, email),
+  foreign key (username) references users (username),
+  foreign key (email) references clientes (email)
+);
