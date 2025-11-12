@@ -26,12 +26,12 @@ public class DataLoader {
         jdbc.createUser(user);
       }
 
-      if (!jdbc.userExists("admin")) {
-        UserDetails admin = User.withUsername("admin")
-            .password(encoder.encode("admin123"))
-            .roles("ADMIN")
+      if (!jdbc.userExists("master")) {
+        UserDetails master = User.withUsername("master")
+            .password(encoder.encode("master123"))
+            .roles("MASTER")
             .build();
-        jdbc.createUser(admin);
+        jdbc.createUser(master);
       }
     };
   }
