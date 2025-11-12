@@ -33,10 +33,13 @@ public class SecurityConfig {
     http
       .csrf(csrf -> csrf.disable()) // API stateless
       .authorizeHttpRequests(auth -> auth
-          .requestMatchers("/public/**").permitAll()
-          .requestMatchers("/api/master/**").hasRole("MASTER")
-          .requestMatchers("/api/**").authenticated()
-          .anyRequest().denyAll()
+          //protegidos
+          .requestMatchers("/pedido/**").hasAnyRole("USER", "MASTER")
+          .requestMatchers("/master/**").hasRole("MASTER")
+          //publicos
+          .requestMatchers("/cardapio/**").permitAll()
+          //qualquer outra rota
+          .anyRequest().permitAll()
       )
       .httpBasic(Customizer.withDefaults());
     return http.build();
