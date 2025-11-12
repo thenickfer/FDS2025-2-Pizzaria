@@ -39,7 +39,7 @@ public class EstoqueService {
                     continue;
 
                 ItemEstoque estoque = estoqueMap.get(item.getId());
-                if (estoque == null || estoque.getQuantidade() < 1) {
+                if (estoque == null || estoque.getQuantidade() < prod.getQuantidade()) {
                     ped.setStatus(Pedido.Status.NEGADO);
                     return ped;
                 }

@@ -243,13 +243,11 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
     }
 
     public double totalUltimos30Dias(String cpf) {
-        String sql = "SELECT COALESCE(sum(p.valor)) FROM clientes c INNER JOIN pedido_cliente pc ON c.cpf = pc.cliente_cpf INNER JOIN pedidos p ON p.id = pc.pedido_id WHERE c.cpf = ? and p.data_hora_pagamento >= DATEADD('DAY',-30,CURRENT_TIMESTAMP)";
+        String sql = "SELECT COALESCE(sum(p.valor), 0) FROM clientes c INNER JOIN pedido_cliente pc ON c.cpf = pc.cliente_cpf INNER JOIN pedidos p ON p.id = pc.pedido_id WHERE c.cpf = ? and p.data_hora_pagamento >= DATEADD('DAY',-30,CURRENT_TIMESTAMP)";
         double valorPedidos = this.jdbcTemplate.query(
                 sql,
                 ps -> ps.setString(1, cpf),
-                rs -> {
-                    return rs.getDouble(1);
-                });
+                rs -> rs.next() ? rs.getDouble(1) : 0.0);
         if (valorPedidos >= 0)
             return valorPedidos;
         else
