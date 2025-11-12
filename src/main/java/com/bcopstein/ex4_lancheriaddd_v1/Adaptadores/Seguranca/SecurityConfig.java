@@ -23,7 +23,6 @@ public class SecurityConfig {
     return new BCryptPasswordEncoder();
   }
 
-
   @Bean
   public UserDetailsService userDetailsService(DataSource dataSource) {
     return new JdbcUserDetailsManager(dataSource);
