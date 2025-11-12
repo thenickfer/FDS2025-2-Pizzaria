@@ -34,7 +34,7 @@ public class EstoqueServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        List<ItemEstoque> lista = Arrays.asList(new ItemEstoque(new Ingrediente(0), 1));
+        List<ItemEstoque> lista = Arrays.asList(new ItemEstoque(0, new Ingrediente(0), 1));
         when(itemEstoqueRepository.getAll()).thenReturn(lista);
         estoqueService = new EstoqueService(itemEstoqueRepository);
     }
