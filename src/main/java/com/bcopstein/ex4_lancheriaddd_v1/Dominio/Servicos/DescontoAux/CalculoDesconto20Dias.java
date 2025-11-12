@@ -2,6 +2,11 @@ package com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.DescontoAux;
 
 import java.util.List;
 
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.PedidoRepository;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,8 +19,7 @@ public class CalculoDesconto20Dias implements CalculoDesconto {
     private static final double TAXA = 0.07;
     private PedidoRepository pedidoRepository;
 
-    @Autowired
-    public CalculoDesconto20Dias(PedidoRepository pedidoRepository) {
+    public CalculoDesconto20Dias(PedidoRepository pedidoRepository){
         this.pedidoRepository = pedidoRepository;
     }
 
