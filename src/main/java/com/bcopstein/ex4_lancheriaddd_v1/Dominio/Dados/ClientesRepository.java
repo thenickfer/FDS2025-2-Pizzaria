@@ -4,4 +4,5 @@ import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Cliente;
 
 public interface ClientesRepository {
   Cliente getByCpf(String cpf);
+  Cliente cadastraCliente(Cliente cliente);
 }
