@@ -123,3 +123,12 @@ create table if not exists authorities (
 );
 
 create unique index if not exists ix_auth_username on authorities (username, authority);
+
+--tabela relacao users e clientes
+create table if not exists users_cliente (
+  username varchar(50) not null,
+  email varchar(255) not null,
+  primary key (username, email),
+  foreign key (username) references users (username),
+  foreign key (email) references clientes (email)
+);
