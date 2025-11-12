@@ -7,14 +7,14 @@ create table if not exists clientes(
 );
 
 create table if not exists ingredientes (
-  id bigint primary key,
-  descricao varchar(255) not null
+ id bigint primary key,
+ descricao varchar(255) not null
 );
 
 create table if not exists itensEstoque(
-    id bigint primary key,
-    quantidade int,
-    ingrediente_id bigint,
+   id bigint primary key,
+   quantidade int,
+   ingrediente_id bigint,
     foreign key (ingrediente_id) references ingredientes(id)
 );
 
