@@ -19,7 +19,7 @@ public class CardapioService {
     public CardapioService(CardapioRepository cardapioRepository) {
         this.cardapioRepository = cardapioRepository;
     }
-
+    
     public Cardapio recuperaCardapio(long Id) {
         return cardapioRepository.recuperaPorId(Id);
     }

@@ -24,7 +24,7 @@ public class ItemEstoqueRepositoryJDBC implements ItemEstoqueRepository {
                 "SELECT id, quantidade, ingrediente_id FROM itensEstoque",
                 (rs, rowNum) -> {
                     Ingrediente ing = new Ingrediente(rs.getLong("ingrediente_id"));
-                    return new ItemEstoque(ing, rs.getInt("quantidade"));
+                    return new ItemEstoque(rs.getInt("id"),ing, rs.getInt("quantidade"));
                 });
         return resp;
     }

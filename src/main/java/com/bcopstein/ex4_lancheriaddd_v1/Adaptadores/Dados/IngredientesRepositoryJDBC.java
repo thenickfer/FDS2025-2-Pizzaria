@@ -30,7 +30,7 @@ public class IngredientesRepositoryJDBC implements IngredientesRepository{
 
     @Override
     public List<Ingrediente> recuperaIngredientesReceita(long id) {
-        String sql = "SELECT i.id, i.descricao FROM ingredientes i " +
+        String sql = "SELECT     i.id, i.descricao FROM ingredientes i " +
                 "JOIN receita_ingrediente ri ON i.id = ri.ingrediente_id " +
                 "WHERE ri.receita_id = ?";
         return jdbcTemplate.query(

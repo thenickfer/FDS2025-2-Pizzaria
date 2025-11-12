@@ -5,7 +5,16 @@ import java.util.List;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.PedidoRepository;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
 
-public class CalculoDesconto20Dias implements CalculoDesconto{
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.PedidoRepository;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
+
+@Component
+public class CalculoDesconto20Dias implements CalculoDesconto {
     private static final int QNTD_PARA_DESCONTO = 3;
     private static final double TAXA = 0.07;
     private PedidoRepository pedidoRepository;
@@ -14,12 +23,12 @@ public class CalculoDesconto20Dias implements CalculoDesconto{
         this.pedidoRepository = pedidoRepository;
     }
 
-    public double calcularDesconto(Pedido p){
+    public double calcularDesconto(Pedido p) {
         if (p == null) {
             return 0;
         }
 
-        List<Pedido> nroPedidos = pedidoRepository.ultimos20Dias(p.getCliente().getCpf()); 
+        List<Pedido> nroPedidos = pedidoRepository.ultimos20Dias(p.getCliente().getCpf());
 
         if (nroPedidos.size() > QNTD_PARA_DESCONTO) {
             double desc = p.getValor() * TAXA;
@@ -32,6 +41,4 @@ public class CalculoDesconto20Dias implements CalculoDesconto{
         return 0;
     }
 
-
 }
-

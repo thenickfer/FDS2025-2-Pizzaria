@@ -27,6 +27,8 @@ import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Pedido;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Produto;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Receita;
 
+import lombok.val;
+
 @Component
 public class PedidoRepositoryJDBC implements PedidoRepository {
     private JdbcTemplate jdbcTemplate;
@@ -61,8 +63,6 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
                 genId,
                 ped.getCliente().getCpf());
 
-        
-
         List<Object[]> batchArgs = new ArrayList<>();
         List<ItemPedido> newItens = new ArrayList<>();
 
@@ -79,7 +79,7 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
             long itemPedidoId = itemKeyHolder.getKey().longValue();
             ItemPedido created = new ItemPedido(itemPedidoId, item.getItem(), item.getQuantidade());
             newItens.add(created);
-            batchArgs.add(new Object[] { genId, itemPedidoId }); 
+            batchArgs.add(new Object[] { genId, itemPedidoId });
         }
 
         this.jdbcTemplate.batchUpdate("INSERT INTO pedido_itemPedido (id_pedido, id_itemPedido) VALUES (?, ?)",
@@ -242,8 +242,18 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
         return pedidos;
     }
 
-    public List<Pedido> ultimos30Dias(String cpf){
-        return null;
+    public double totalUltimos30Dias(String cpf) {
+        String sql = "SELECT COALESCE(sum(p.valor)) FROM clientes c INNER JOIN pedido_cliente pc ON c.cpf = pc.cliente_cpf INNER JOIN pedidos p ON p.id = pc.pedido_id WHERE c.cpf = ? and p.data_hora_pagamento >= DATEADD('DAY',-30,CURRENT_TIMESTAMP)";
+        double valorPedidos = this.jdbcTemplate.query(
+                sql,
+                ps -> ps.setString(1, cpf),
+                rs -> {
+                    return rs.getDouble(1);
+                });
+        if (valorPedidos >= 0)
+            return valorPedidos;
+        else
+            return 0;
     }
 
     @Override
@@ -421,7 +431,7 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
                             double pedidoDesconto = rs.getDouble("desconto");
                             double pedidoValorCobrado = rs.getDouble("valor_cobrado");
 
-                            // cliente 
+                            // cliente
                             Cliente cliente = new Cliente(
                                     rs.getString("cpf"),
                                     rs.getString("nome"),
@@ -441,7 +451,7 @@ public class PedidoRepositoryJDBC implements PedidoRepository {
                                     pedidoDesconto,
                                     pedidoValorCobrado);
                         }
-                        
+
                         // itens pedido
                         Long idItemPedido = (Long) rs.getObject("itemPedidoID");
                         Long quantidade = (Long) rs.getObject("itemPedidoQuant");
