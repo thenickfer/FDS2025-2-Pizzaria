@@ -12,8 +12,8 @@ public class CadastroClienteResponse {
     private String endereco;
     private String cpf;
 
-    public static cadastroClienteResponse fromEntity(com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Cliente cliente) {
-        return new cadastroClienteResponse(
+    public static CadastroClienteResponse fromEntity(com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Cliente cliente) {
+        return new CadastroClienteResponse(
             cliente.getNome(),
             cliente.getCelular(),
             cliente.getEndereco(),
