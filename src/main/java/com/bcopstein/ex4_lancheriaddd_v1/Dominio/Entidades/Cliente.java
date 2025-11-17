@@ -1,5 +1,7 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades;
+import lombok.Builder;
 
+@Builder
 public class Cliente {
     private String cpf;
     private String nome;

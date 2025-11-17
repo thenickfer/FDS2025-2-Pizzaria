@@ -1,5 +1,7 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses;
 
+import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Requests.CadastroClienteRequest;
+import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Cliente;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.ClienteService;
 
 public class CadastroClienteUC {
@@ -10,7 +12,7 @@ public class CadastroClienteUC {
         this.clienteService = clienteService;
     }
 
-    public CadastroClienteResponse run(CadastraroClienteRequest request) {
+    public CadastroClienteResponse run(CadastroClienteRequest request) {
         
         
         // FAZER Exception DPS
