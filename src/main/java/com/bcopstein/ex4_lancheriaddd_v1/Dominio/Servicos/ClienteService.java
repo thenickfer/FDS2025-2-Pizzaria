@@ -22,11 +22,4 @@ public class ClienteService {
         return cliente;
     }
 
-    public Cliente cadastraCliente(Cliente cliente) {
-        if (clientesRepository.getByCpf(cliente.getCpf()) != null) {
-            throw new IllegalArgumentException("Cliente já cadastrado com Cpf: " + cliente.getCpf());
-        }
-        return clientesRepository.cadastraCliente(cliente);
-    }
-
 }

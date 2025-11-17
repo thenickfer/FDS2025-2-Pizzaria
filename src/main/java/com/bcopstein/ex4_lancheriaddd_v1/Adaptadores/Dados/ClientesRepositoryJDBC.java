@@ -1,6 +1,5 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Dados;
 
-import java.sql.PreparedStatement;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,11 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Component
 public class ClientesRepositoryJDBC implements ClientesRepository {
     private JdbcTemplate jdbcTemplate;
-    private PasswordEncoder passwordEncoder;
 
     public ClientesRepositoryJDBC(JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
         this.jdbcTemplate = jdbcTemplate;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public Cliente getByCpf(String cpf) {
@@ -40,24 +37,22 @@ public class ClientesRepositoryJDBC implements ClientesRepository {
 
     }
 
-    public Cliente cadastraCliente(Cliente cliente) {
-        String sql = "INSERT INTO CLIENTES (cpf, nome, celular, endereco, email) VALUES (?, ?, ?, ?, ?)";
+    public boolean cadastro(String cpf, String nome, String celular, String endereco, String email){
+        String sql = "INSERT into clientes (cpf, nome, celular, endereco, email) values (?, ?, ?, ?, ?)";
+        int var = 0;
 
-        int rows = this.jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, cliente.getCpf());
-            ps.setString(2, cliente.getNome());
-            ps.setString(3, cliente.getCelular());
-            ps.setString(4, cliente.getEndereco());
-            ps.setString(5, cliente.getEmail());
-            return ps;
-        });
+        var = jdbcTemplate.update(sql,
+         ps -> {
+            ps.setString(1, cpf);
+            ps.setString(2, nome);
+            ps.setString(3, celular);
+            ps.setString(4, endereco);
+            ps.setString(5, email);
+         });
+            if (var != 1) {
+                throw new IllegalStateException("Esperava inserir 1 linha, inseriu: " + var);
+            }
 
-        if (rows == 1) {
-            return cliente;
-        } else {
-            throw new RuntimeException("Falha ao salvar cliente, registro não inserido.");
-        }
+        return true;
     }
-
 }
