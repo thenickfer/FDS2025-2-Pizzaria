@@ -35,4 +35,35 @@ public class ClientesRepositoryJDBC implements ClientesRepository {
         return clientes.isEmpty() ? null : clientes.get(0);
 
     }
+
+    public boolean cadastro(String cpf, String nome, String celular, String endereco, String email){
+        String sql = "INSERT into clientes (cpf, nome, celular, endereco, email) values (?, ?, ?, ?, ?)";
+        int var = 0;
+
+        var = jdbcTemplate.update(sql,
+         ps -> {
+            ps.setString(1, cpf);
+            ps.setString(2, nome);
+            ps.setString(3, celular);
+            ps.setString(4, endereco);
+            ps.setString(5, email);
+         });
+            if (var != 1) {
+                throw new IllegalStateException("Esperava inserir 1 linha, inseriu: " + var);
+            }
+
+        sql = "update clientes set username = ? where cpf = ?";
+
+        var = jdbcTemplate.update(sql,
+        ps-> {
+            ps.setString(1, email);
+            ps.setString(2, cpf);
+        });
+            if (var != 1) {
+                throw new IllegalStateException("Esperava inserir 1 linha, inseriu: " + var);
+            }
+
+
+        return true;
+    }
 }
