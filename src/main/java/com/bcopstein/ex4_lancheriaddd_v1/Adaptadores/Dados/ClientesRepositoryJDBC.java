@@ -53,17 +53,6 @@ public class ClientesRepositoryJDBC implements ClientesRepository {
                 throw new IllegalStateException("Esperava inserir 1 linha, inseriu: " + var);
             }
 
-        sql = "update clientes set username = ? where cpf = ?";
-
-        var = jdbcTemplate.update(sql,
-        ps-> {
-            ps.setString(1, email);
-            ps.setString(2, cpf);
-        });
-            if (var != 1) {
-                throw new IllegalStateException("Esperava inserir 1 linha, inseriu: " + var);
-            }
-
         return true;
     }
 }

@@ -6,6 +6,9 @@ create table if not exists clientes(
   email varchar(255) not null
 );
 
+alter table clientes
+  add constraint uk_clientes_email unique (email);
+
 create table if not exists ingredientes (
  id bigint primary key,
  descricao varchar(255) not null

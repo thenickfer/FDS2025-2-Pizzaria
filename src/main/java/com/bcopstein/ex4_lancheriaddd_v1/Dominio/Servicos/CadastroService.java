@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.ClientesRepository;
@@ -15,11 +15,11 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class CadastroService {
-    private final JdbcUserDetailsManager userManager;
+    private final UserDetailsManager userManager;
     private ClientesRepository repo;
 
     @Autowired
-    public CadastroService(JdbcUserDetailsManager userManager, JdbcTemplate jdbc, PasswordEncoder encoder, ClientesRepository repo) {
+    public CadastroService(UserDetailsManager userManager, JdbcTemplate jdbc, PasswordEncoder encoder, ClientesRepository repo) {
         this.userManager = userManager;
         this.repo = repo;
     }

@@ -20,7 +20,7 @@ public class ClienteController {
         this.cadastroClienteUC = cadastroClienteUC;
     }  
 
-    @PostMapping("/")
+    @PostMapping("/cliente")
     @CrossOrigin("*")
     public ResponseEntity<CadastroClienteResponse> cadastraCliente(@RequestBody CadastroClienteRequest request) {
         CadastroClienteResponse response = cadastroClienteUC.run(request);

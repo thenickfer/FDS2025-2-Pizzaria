@@ -5,10 +5,11 @@ import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.Responses.CadastroClienteResp
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Cliente;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Servicos.CadastroService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
-
+@Component
 public class CadastroClienteUC {
 
     private CadastroService cadService;
@@ -22,10 +23,10 @@ public class CadastroClienteUC {
 
     public CadastroClienteResponse run(CadastroClienteRequest request) {
         if(request.getSenha() == null){
-            throw new IllegalArgumentException("senha deve existir");
+            throw new IllegalArgumentException("Senha deve existir");
         }
         if(request.getEmail() == null){
-            throw new IllegalArgumentException("email deve existir");
+            throw new IllegalArgumentException("Email deve existir");
         }
 
         Cliente cliente = Cliente.builder()
@@ -38,7 +39,7 @@ public class CadastroClienteUC {
 
         UserDetails user = User.withUsername(request.getEmail())
             .password(passwordEncoder.encode(request.getSenha()))
-            .roles("CLIENTE")
+            .roles("USER")
             .build();
 
         cliente = cadService.cadastrarCliente(cliente, user);
