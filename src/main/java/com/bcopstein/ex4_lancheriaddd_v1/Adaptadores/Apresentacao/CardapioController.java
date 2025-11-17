@@ -22,16 +22,18 @@ import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Produto;
 public class CardapioController {
     private RecuperarCardapioUC recuperaCardapioUC;
     private RecuperaListaCardapiosUC recuperaListaCardapioUC;
+    private long id;
 
     public CardapioController(RecuperarCardapioUC recuperaCardapioUC,
             RecuperaListaCardapiosUC recuperaListaCardapioUC) {
         this.recuperaCardapioUC = recuperaCardapioUC;
         this.recuperaListaCardapioUC = recuperaListaCardapioUC;
+        this.id = 1;
     }
 
     @GetMapping("/{id}")
     @CrossOrigin("*")
-    public CardapioPresenter recuperaCardapio(@PathVariable(value = "id") long id) {
+    public CardapioPresenter recuperaCardapio() {
         CardapioResponse cardapioResponse = recuperaCardapioUC.run(id);
         Set<Long> conjIdSugestoes = new HashSet<>(cardapioResponse.getSugestoesDoChef().stream()
                 .map(produto -> produto.getId())
@@ -51,5 +53,13 @@ public class CardapioController {
                 .map(cabCar -> new CabecalhoCardapioPresenter(cabCar.id(), cabCar.titulo()))
                 .toList();
         return lstCardapios;
+    }
+
+    public boolean setCardapio(long idNovo) {
+        if (recuperaCardapioUC.run(idNovo) != null) {
+            this.id = idNovo;
+            return true;
+        }
+        return false;
     }
 }

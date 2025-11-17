@@ -20,7 +20,11 @@ public class DescontoService {
     }
 
     public double calcularDesconto(Pedido p) {
-        return this.cd.calcularDesconto(p);   
+        return this.cd.calcularDesconto(p);
+    }
+
+    public synchronized void setCalculoDesconto(CalculoDesconto cd) {
+        this.cd = cd;
     }
 
 }

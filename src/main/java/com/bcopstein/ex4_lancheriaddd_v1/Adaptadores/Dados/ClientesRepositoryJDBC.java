@@ -1,5 +1,6 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Dados;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -7,13 +8,16 @@ import org.springframework.stereotype.Component;
 
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Dados.ClientesRepository;
 import com.bcopstein.ex4_lancheriaddd_v1.Dominio.Entidades.Cliente;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Component
 public class ClientesRepositoryJDBC implements ClientesRepository {
     private JdbcTemplate jdbcTemplate;
+    private PasswordEncoder passwordEncoder;
 
-    public ClientesRepositoryJDBC(JdbcTemplate jdbcTemplate) {
+    public ClientesRepositoryJDBC(JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
         this.jdbcTemplate = jdbcTemplate;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Cliente getByCpf(String cpf) {
