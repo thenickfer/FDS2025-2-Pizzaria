@@ -1,6 +1,5 @@
 package com.bcopstein.ex4_lancheriaddd_v1.Adaptadores.Dados;
 
-import java.sql.PreparedStatement;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,11 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Component
 public class ClientesRepositoryJDBC implements ClientesRepository {
     private JdbcTemplate jdbcTemplate;
-    private PasswordEncoder passwordEncoder;
 
     public ClientesRepositoryJDBC(JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
         this.jdbcTemplate = jdbcTemplate;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public Cliente getByCpf(String cpf) {
@@ -66,7 +63,6 @@ public class ClientesRepositoryJDBC implements ClientesRepository {
             if (var != 1) {
                 throw new IllegalStateException("Esperava inserir 1 linha, inseriu: " + var);
             }
-
 
         return true;
     }

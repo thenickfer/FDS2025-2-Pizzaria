@@ -25,17 +25,16 @@ public class CadastroService {
     }
 
   @Transactional
-  public boolean cadastrarCliente(Cliente cli, UserDetails user) {
+  public Cliente cadastrarCliente(Cliente cli, UserDetails user) {
 
     if(userManager.userExists(user.getUsername()) || !(repo.getByCpf(cli.getCpf())==null)){
         throw new ClienteRegisteredException(user.getUsername(),cli.getCpf());
     }
     userManager.createUser(user);
 
-    //BOTAR IF
     if (!repo.cadastro(cli.getCpf(), cli.getNome(), cli.getCelular(), cli.getEndereco(), cli.getEmail())){
         throw new IllegalStateException("Problema ao registrar cliente");
     }
-    return true;
+    return cli;
   }
 }
