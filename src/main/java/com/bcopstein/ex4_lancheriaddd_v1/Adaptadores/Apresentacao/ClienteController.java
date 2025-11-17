@@ -20,6 +20,7 @@ public class ClienteController {
     }  
 
     @PostMapping("/cadastro")
+    @CrossOrigin("*")
     public ResponseEntity<CadastroClienteResponse> cadastraCliente(@RequestBody CadastroClienteRequest request) {
         CadastroClienteResponse response = cadastroClienteUC.run(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
