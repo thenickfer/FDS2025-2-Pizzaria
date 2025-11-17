@@ -13,10 +13,12 @@ import com.bcopstein.ex4_lancheriaddd_v1.Aplicacao.MudaDescontoUC;
 @RequestMapping("/master")
 public class MasterController {
     private MudaDescontoUC mudaDescontoUC;
+    private CardapioController cardapioController;
 
     @Autowired
-    public MasterController(MudaDescontoUC mudaDescontoUC) {
+    public MasterController(MudaDescontoUC mudaDescontoUC, CardapioController cardapioController) {
         this.mudaDescontoUC = mudaDescontoUC;
+        this.cardapioController = cardapioController;
     }
 
     @PatchMapping("/desconto")
@@ -26,6 +28,13 @@ public class MasterController {
             return ResponseEntity.noContent().build();
         else
             return ResponseEntity.badRequest().build();
+    }
+
+    @PatchMapping("/cardapio")
+    public ResponseEntity<Void> atualizaCardapio(@RequestParam(value = "id_cardapio") long idCardapio) {
+        if (cardapioController.setCardapio(idCardapio))
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.badRequest().build();
     }
 
 }
