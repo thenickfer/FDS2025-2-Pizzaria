@@ -31,7 +31,7 @@ public class CardapioController {
         this.id = 1;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/")
     @CrossOrigin("*")
     public CardapioPresenter recuperaCardapio() {
         CardapioResponse cardapioResponse = recuperaCardapioUC.run(id);
